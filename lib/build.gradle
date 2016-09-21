@@ -1,11 +1,10 @@
-group 'com.mindorks'
-version '1.0-SNAPSHOT'
-
 plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
 def ver = '0.0.1-dev'
+group 'com.mindorks'
+version ver
 
 apply plugin: 'java'
 apply plugin: 'idea'
