@@ -5,6 +5,7 @@ import com.mindorks.jpost.core.ChannelState;
 import com.mindorks.jpost.core.ChannelType;
 import com.mindorks.jpost.core.Post;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
+import com.mindorks.jpost.exceptions.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalStateException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public abstract class AbstractChannel<Q extends PriorityBlockingQueue<WeakReference<Post>>,
+public abstract class AbstractChannel<Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
         M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>> implements Channel<Q, M>{
 
     private Integer channelId;
@@ -71,7 +72,7 @@ public abstract class AbstractChannel<Q extends PriorityBlockingQueue<WeakRefere
     }
 
     @Override
-    public abstract <T> void broadcast(T msg) throws IllegalStateException;
+    public abstract <T> void broadcast(T msg) throws NullObjectException, IllegalStateException;
 
     @Override
     public abstract <T> T addSubscriber(T subscriber, Integer subscriberId)

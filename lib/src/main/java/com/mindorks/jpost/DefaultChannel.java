@@ -1,12 +1,14 @@
 package com.mindorks.jpost;
 
+import com.mindorks.jpost.annotations.SubscribeMsg;
 import com.mindorks.jpost.core.*;
-import com.mindorks.jpost.exceptions.AlreadyExistsException;
+import com.mindorks.jpost.exceptions.*;
 import com.mindorks.jpost.exceptions.IllegalStateException;
-import com.mindorks.jpost.exceptions.InvalidPropertyException;
-import com.mindorks.jpost.exceptions.NullObjectException;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
@@ -16,23 +18,23 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakReference<Post>>,
+public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
         ConcurrentHashMap<Integer,WeakReference<Object>>>{
 
     public DefaultChannel() {
-        super(0, ChannelState.OPEN, ChannelType.DEFAULT,  new PriorityBlockingQueue<>(Channel.MSG_QUEUE_INITIAL_CAPACITY,
-                new Comparator<WeakReference<Post>>() {
+        super(DEFAULT_CHANNEL_ID, ChannelState.OPEN, ChannelType.DEFAULT,  new PriorityBlockingQueue<>(MSG_QUEUE_INITIAL_CAPACITY,
+                new Comparator<WeakReference<ChannelPost>>() {
                     @Override
-                    public int compare(WeakReference<Post> o1, WeakReference<Post> o2) {
-                        Post post1 = o1.get();
-                        Post post2 = o2.get();
+                    public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
+                        ChannelPost post1 = o1.get();
+                        ChannelPost post2 = o2.get();
                         if(post1 != null || post2 != null){
                             return post1.getPriority().compareTo(post2.getPriority());
                         }else{
                             return 0;
                         }
                     }
-                }),  new ConcurrentHashMap<Integer, WeakReference<Object>>(Channel.SUBSCRIBER_INITIAL_CAPACITY));
+                }),  new ConcurrentHashMap<Integer, WeakReference<Object>>(SUBSCRIBER_INITIAL_CAPACITY));
     }
 
     @Override
@@ -41,9 +43,61 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
     }
 
     @Override
-    public <T> void broadcast(T msg) throws IllegalStateException {
+    public <T> void broadcast(T msg) throws NullObjectException, IllegalStateException {
         if(super.getChannelState() != ChannelState.OPEN){
             throw new IllegalStateException("Channel is closed");
+        }
+        if(msg == null){
+            throw new NullObjectException("subscriber is null");
+        }
+
+        ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
+        getPostQueue().put(new WeakReference<ChannelPost>(post));
+
+        while (!getPostQueue().isEmpty()) {
+            try {
+                WeakReference<ChannelPost> msgRef = getPostQueue().take();
+                ChannelPost mspPost = msgRef.get();
+                if (mspPost != null && mspPost.getChannelId() != null) {
+                    if(mspPost.getChannelId().equals(getChannelId())) {
+                        for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
+                            Object subscriberObj = subscriberRef.get();
+                            if (subscriberObj != null) {
+                                for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
+                                    Annotation annotation = method.getAnnotation(SubscribeMsg.class);
+                                    if (annotation != null) {
+                                        SubscribeMsg subscribeMsg = (SubscribeMsg) annotation;
+                                        int channelId = subscribeMsg.channelId();
+                                        if (getChannelId().equals(channelId)) {
+                                            try {
+                                                boolean methodFound = false;
+                                                for (final Class paramClass : method.getParameterTypes()) {
+                                                    if (paramClass.equals(mspPost.getClass())) {
+                                                        methodFound = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (methodFound) {
+                                                    method.setAccessible(true);
+                                                    method.invoke(mspPost.getMessage());
+                                                }
+                                            } catch (IllegalAccessException e) {
+                                                e.printStackTrace();
+                                            } catch (InvocationTargetException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        getPostQueue().put(msgRef);
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -53,7 +107,6 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
         if(super.getChannelState() != ChannelState.OPEN){
             throw new IllegalStateException("Channel with id " + super.getChannelId() + " is closed");
         }
-
         if(subscriber == null){
             throw new NullObjectException("subscriber is null");
         }

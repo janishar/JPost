@@ -4,24 +4,26 @@ import com.mindorks.jpost.exceptions.InvalidPropertyException;
 import com.mindorks.jpost.exceptions.NoSuchChannelException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
-import java.util.List;
 
 /**
  * Created by janisharali on 22/09/16.
  */
 public interface Post<T, K> {
-    <T>T setMessage() throws NullObjectException;
-    <T>T getMessage();
-    void setPriority(Integer integer) throws NullObjectException, InvalidPropertyException;
+
+    int PRIORITY_LOW = 1;
+    int PRIORITY_MEDIUM = 2;
+    int PRIORITY_HIGH = 3;
+
+    void setMessage(T message);
+    T getMessage();
+    void setPriority(Integer priority);
     Integer getPriority();
-    <K>K getSender() throws NullObjectException;
-    <K>K setSender();
-    boolean setReceivers(Object... receivers) throws NullObjectException;
-    List<Object> getReceiversList();
+    K getSender() throws NullObjectException;
+    void setSender(K sender);
+    void setReceivers(Object... receivers);
+    Object[] getReceiversList();
     void setIsSerialised(boolean isSerialised);
     boolean isSerialised();
-    String setSerialisedClassName() throws NullObjectException;
+    void setSerialisedClassName(String className);
     String getSerialisedClassName();
-    Integer getChannelId();
-    void setChannelId(Integer channelId) throws NullObjectException, NoSuchChannelException;
 }
