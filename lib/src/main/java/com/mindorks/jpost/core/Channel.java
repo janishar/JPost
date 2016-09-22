@@ -18,13 +18,61 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
     int SUBSCRIBER_INITIAL_CAPACITY = 10;
     int DEFAULT_CHANNEL_ID = -99999999;
 
+    /**
+     *
+     * @return
+     */
     Integer getChannelId();
+
+    /**
+     *
+     * @return
+     */
     ChannelType getChannelType();
+
+    /**
+     *
+     * @return
+     */
     Q getPostQueue();
+
+    /**
+     *
+     * @return
+     */
     M getSubscriberMap();
+
+    /**
+     *
+     * @return
+     */
     ChannelState getChannelState();
+
+    /**
+     *
+     * @param state
+     */
     void setChannelState(ChannelState state);
+
+    /**
+     *
+     * @param msg
+     * @param <T>
+     * @throws NullObjectException
+     * @throws IllegalStateException
+     */
     <T>void broadcast(T msg) throws NullObjectException, IllegalStateException;
+
+    /**
+     *
+     * @param subscriber
+     * @param subscriberId
+     * @param <T>
+     * @return
+     * @throws NullObjectException
+     * @throws AlreadyExistsException
+     * @throws IllegalStateException
+     */
     <T> T addSubscriber(T subscriber, Integer subscriberId) throws NullObjectException, AlreadyExistsException, IllegalStateException;
     Collection<? extends WeakReference<?>> getAllSubscribersReferenceList();
 }

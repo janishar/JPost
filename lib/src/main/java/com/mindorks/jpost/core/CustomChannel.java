@@ -10,7 +10,19 @@ import java.util.concurrent.PriorityBlockingQueue;
 public interface CustomChannel<Q extends PriorityBlockingQueue<? extends WeakReference<? extends ChannelPost>>,
         M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>>
         extends Channel<Q, M>{
+
+    /**
+     *
+     */
     void removeChannel();
+
+    /**
+     *
+     */
     void startChannel();
+
+    /**
+     *
+     */
     void stopChannel();
 }
