@@ -1,25 +1,18 @@
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.core.Channel;
-import com.mindorks.jpost.core.ChannelState;
-import com.mindorks.jpost.core.ChannelType;
-import com.mindorks.jpost.core.Post;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
-import com.mindorks.jpost.exceptions.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalStateException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Created by janisharali on 22/09/16.
  */
-public abstract class AbstractChannel<Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+public abstract class AbstractChannel<Q extends PriorityBlockingQueue<? extends WeakReference<? extends ChannelPost>>,
         M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>> implements Channel<Q, M>{
 
     private Integer channelId;
@@ -63,7 +56,7 @@ public abstract class AbstractChannel<Q extends PriorityBlockingQueue<WeakRefere
 
     @Override
     public M getSubscriberMap() {
-        return getSubscriberMap();
+        return subscriberMap;
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.mindorks.jpost;
 
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
-import com.mindorks.jpost.exceptions.ChannelPost;
+import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalStateException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
@@ -60,7 +60,7 @@ public class PrivateChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
         if(subscriberId == null){
             throw new NullObjectException("subscriberId is null");
         }
-        if(!super.getSubscriberMap().containsKey(subscriberId)){
+        if(super.getSubscriberMap().containsKey(subscriberId)){
             throw new AlreadyExistsException("subscriber with subscriberId " + subscriberId + " already registered");
         }
         super.getSubscriberMap().put(subscriberId, new WeakReference<Object>(subscriber));

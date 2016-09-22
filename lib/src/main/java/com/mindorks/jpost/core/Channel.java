@@ -11,7 +11,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public interface Channel<Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference<? extends ChannelPost>>,
         M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>> {
 
     int MSG_QUEUE_INITIAL_CAPACITY = 10;

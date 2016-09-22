@@ -9,9 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -72,14 +70,14 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
                                             try {
                                                 boolean methodFound = false;
                                                 for (final Class paramClass : method.getParameterTypes()) {
-                                                    if (paramClass.equals(mspPost.getClass())) {
+                                                    if (paramClass.equals(mspPost.getMessage().getClass())) {
                                                         methodFound = true;
                                                         break;
                                                     }
                                                 }
                                                 if (methodFound) {
                                                     method.setAccessible(true);
-                                                    method.invoke(mspPost.getMessage());
+                                                    method.invoke(subscriberObj, mspPost.getMessage());
                                                 }
                                             } catch (IllegalAccessException e) {
                                                 e.printStackTrace();
@@ -113,7 +111,7 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
         if(subscriberId == null){
             throw new NullObjectException("subscriberId is null");
         }
-        if(!super.getSubscriberMap().containsKey(subscriberId)){
+        if(super.getSubscriberMap().containsKey(subscriberId)){
             throw new AlreadyExistsException("subscriber with subscriberId " + subscriberId + " already registered");
         }
         super.getSubscriberMap().put(subscriberId, new WeakReference<Object>(subscriber));
