@@ -11,9 +11,10 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public interface CustomChannel<Q extends PriorityBlockingQueue<WeakReference<Post>>, M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>>
+public interface CustomChannel<Q extends PriorityBlockingQueue<WeakReference<Post>>,
+        M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>>
         extends Channel<Q, M>{
-    boolean removeChannel(Integer channelId) throws NoSuchChannelException;
-    boolean startChannel(Integer channelId) throws NoSuchChannelException;
-    boolean stopChannel(Integer channelId) throws NoSuchChannelException;
+    void removeChannel();
+    void startChannel();
+    void stopChannel();
 }
