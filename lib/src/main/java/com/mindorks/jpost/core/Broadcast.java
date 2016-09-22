@@ -31,6 +31,7 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
     C getChannel(Integer channelId)
             throws NoSuchChannelException, NullObjectException;
     public <T> void broadcast(Integer channelId, T msg);
+    public <V, T> void broadcast(V owner, Integer channelId, T msg);
     public <T> void broadcast(T msg);
     public <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId);
     public <T> void addSubscriber(T subscriber);

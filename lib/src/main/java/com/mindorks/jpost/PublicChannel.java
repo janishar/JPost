@@ -1,12 +1,16 @@
 package com.mindorks.jpost;
 
+import com.mindorks.jpost.annotations.SubscribeMsg;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalStateException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -19,8 +23,8 @@ public class PublicChannel extends AbstractChannel<PriorityBlockingQueue<WeakRef
         implements CustomChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
         ConcurrentHashMap<Integer,WeakReference<Object>>>{
 
-    public PublicChannel(Integer channelId, ChannelState state) {
-        super(channelId, state, ChannelType.PUBLIC,  new PriorityBlockingQueue<>(MSG_QUEUE_INITIAL_CAPACITY,
+    public PublicChannel(Integer channelId, ChannelType type, ChannelState state) {
+        super(channelId, state, type,  new PriorityBlockingQueue<>(MSG_QUEUE_INITIAL_CAPACITY,
                 new Comparator<WeakReference<ChannelPost>>() {
                     @Override
                     public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
@@ -42,6 +46,54 @@ public class PublicChannel extends AbstractChannel<PriorityBlockingQueue<WeakRef
         }
         if(msg == null){
             throw new NullObjectException("subscriber is null");
+        }
+        ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
+        getPostQueue().put(new WeakReference<ChannelPost>(post));
+
+        while (!getPostQueue().isEmpty()) {
+            try {
+                WeakReference<ChannelPost> msgRef = getPostQueue().take();
+                ChannelPost mspPost = msgRef.get();
+                if (mspPost != null && mspPost.getChannelId() != null) {
+                    if(mspPost.getChannelId().equals(getChannelId())) {
+                        for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
+                            Object subscriberObj = subscriberRef.get();
+                            if (subscriberObj != null) {
+                                for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
+                                    Annotation annotation = method.getAnnotation(SubscribeMsg.class);
+                                    if (annotation != null) {
+                                        SubscribeMsg subscribeMsg = (SubscribeMsg) annotation;
+                                        int channelId = subscribeMsg.channelId();
+                                        if (getChannelId().equals(channelId)) {
+                                            try {
+                                                boolean methodFound = false;
+                                                for (final Class paramClass : method.getParameterTypes()) {
+                                                    if (paramClass.equals(mspPost.getMessage().getClass())) {
+                                                        methodFound = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (methodFound) {
+                                                    method.setAccessible(true);
+                                                    method.invoke(subscriberObj, mspPost.getMessage());
+                                                }
+                                            } catch (IllegalAccessException e) {
+                                                e.printStackTrace();
+                                            } catch (InvocationTargetException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        getPostQueue().put(msgRef);
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -34,4 +34,7 @@ public class JPost {
         return broadcastCenter;
     }
 
+    public static void shutdown(){
+        executorService.shutdown();
+    }
 }
