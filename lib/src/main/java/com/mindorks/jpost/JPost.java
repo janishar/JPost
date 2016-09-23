@@ -20,14 +20,15 @@ public class JPost {
             ConcurrentHashMap<Integer,WeakReference<Object>>>>> channelMap;
 
     private static BroadcastCenter broadcastCenter;
+    private static DefaultChannel channel;
     private static int threadCount = Runtime.getRuntime().availableProcessors() + 1;
 
     static {
         channelMap = new ConcurrentHashMap<>(Broadcast.CHANNEL_INITIAL_CAPACITY);
+        channel = new DefaultChannel(Channel.DEFAULT_CHANNEL_ID, ChannelType.DEFAULT, ChannelState.OPEN);
         channelMap.put(Channel.DEFAULT_CHANNEL_ID,
                 new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                        ConcurrentHashMap<Integer,WeakReference<Object>>>>(
-                                new DefaultChannel(Channel.DEFAULT_CHANNEL_ID, ChannelType.DEFAULT, ChannelState.OPEN)));
+                        ConcurrentHashMap<Integer,WeakReference<Object>>>>(channel));
         broadcastCenter = new BroadcastCenter();
     }
 
