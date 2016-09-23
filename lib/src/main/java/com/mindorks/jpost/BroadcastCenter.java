@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.mindorks.jpost.JPost.channelMap;
 import static com.mindorks.jpost.JPost.executorService;
@@ -18,6 +19,12 @@ import static com.mindorks.jpost.JPost.executorService;
  */
 public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
         ConcurrentHashMap<Integer,WeakReference<Object>>>>{
+
+    private ReentrantLock channelStateChangerLock;
+
+    public BroadcastCenter() {
+        channelStateChangerLock = new ReentrantLock();
+    }
 
     @Override
     public <T> PrivateChannel createPrivateChannel(T owner, Integer channelId)
@@ -48,48 +55,17 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
     @Override
     public void stopChannel(Integer channelId) {
-        try {
-            Channel channel = getChannel(channelId);
-            if (channel.getChannelState() == ChannelState.REMOVED) {
-                throw new IllegalStateException("Channel with id " + channelId + " has been removed");
-            }
-            channel.setChannelState(ChannelState.STOPPED);
-        }catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (IllegalStateException e){
-            e.printStackTrace();
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }
+        executorService.execute(new ChannelStateTasKRunner(channelId, ChannelState.STOPPED));
     }
 
     @Override
     public void reopenChannel(Integer channelId) {
-        try {
-            Channel channel = getChannel(channelId);
-            if (channel.getChannelState() == ChannelState.REMOVED) {
-                throw new IllegalStateException("Channel with id " + channelId + " has been removed");
-            }
-            channel.setChannelState(ChannelState.OPEN);
-        }catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (IllegalStateException e){
-            e.printStackTrace();
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }
+        executorService.execute(new ChannelStateTasKRunner(channelId, ChannelState.OPEN));
     }
 
     @Override
-    public void removeChannel(Integer channelId) {
-        try {
-            getChannel(channelId).setChannelState(ChannelState.REMOVED);
-        }
-        catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }
+    public void terminateChannel(Integer channelId) {
+        executorService.execute(new ChannelStateTasKRunner(channelId, ChannelState.TERMINATED));
     }
 
     @Override
@@ -157,6 +133,51 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         return null;
     }
 
+    private class ChannelStateTasKRunner implements Runnable{
+
+        private Integer channelId;
+        private ChannelState state;
+
+        public ChannelStateTasKRunner(Integer channelId, ChannelState state) {
+            this.channelId = channelId;
+            this.state = state;
+            new Thread(this, String.valueOf(channelId));
+        }
+
+        @Override
+        public void run(){
+            try {
+                channelStateChangerLock.lock();
+                Channel channel = getChannel(channelId);
+                if (channel.getChannelState() == ChannelState.TERMINATED) {
+                    throw new IllegalStateException("Channel with id " + channelId + " has been terminated");
+                }
+                if(channel instanceof CustomChannel){
+                    switch (state){
+                        case OPEN:
+                            ((CustomChannel)channel).startChannel();
+                            break;
+                        case STOPPED:
+                            ((CustomChannel)channel).stopChannel();
+                            break;
+                        case TERMINATED:
+                            ((CustomChannel)channel).terminateChannel();
+                            channelMap.remove(channelId);
+                            break;
+                    }
+                }
+            }catch (NoSuchChannelException e){
+                e.printStackTrace();
+            }catch (NullObjectException e){
+                e.printStackTrace();
+            }catch (IllegalStateException e){
+                e.printStackTrace();
+            }finally {
+                channelStateChangerLock.unlock();
+            }
+        }
+    }
+
     private class MsgTasKRunner<T> implements Runnable{
 
         private Integer channelId;
@@ -215,7 +236,11 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     private <T>void runTask(Integer channelId, T msg){
         try {
             Channel channel = getChannel(channelId);
-            channel.broadcast(msg);
+            if(channel.getChannelState() == ChannelState.OPEN){
+                channel.broadcast(msg);
+            }else{
+                throw new IllegalStateException("Channel with channelId " + channelId + " has been " + channel.getChannelState());
+            }
         }catch (NoSuchChannelException e){
             e.printStackTrace();
         }catch (IllegalStateException e){
@@ -228,17 +253,21 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     private <V, T>void runTask(V owner, Integer channelId, T msg) {
         try {
             Channel channel = getChannel(channelId);
-            if(channel instanceof PrivateChannel){
-                PrivateChannel privateChannel = (PrivateChannel)channel;
-                if(privateChannel.getChannelOwnerRef() != null && privateChannel.getChannelOwnerRef().get() != null){
-                    if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
-                        privateChannel.broadcast(msg);
-                    }else{
-                        throw new PermissionException("Only the owner of the private channel is allowed to broadcast on private channel");
+            if(channel.getChannelState() == ChannelState.OPEN){
+                if(channel instanceof PrivateChannel){
+                    PrivateChannel privateChannel = (PrivateChannel)channel;
+                    if(privateChannel.getChannelOwnerRef() != null && privateChannel.getChannelOwnerRef().get() != null){
+                        if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
+                            privateChannel.broadcast(msg);
+                        }else{
+                            throw new PermissionException("Only the owner of the private channel is allowed to broadcast on private channel");
+                        }
                     }
+                }else{
+                    throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
                 }
             }else{
-                throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
+                throw new IllegalStateException("Channel with channelId " + channelId + " has been " + channel.getChannelState().name());
             }
         }catch (NoSuchChannelException e){
             e.printStackTrace();
@@ -254,7 +283,11 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     private <T>void runTask(Integer channelId, T subscriber, Integer subscriberId){
         try {
             Channel channel = getChannel(channelId);
-            channel.addSubscriber(subscriber, subscriberId);
+            if(channel.getChannelState() == ChannelState.OPEN){
+                channel.addSubscriber(subscriber, subscriberId);;
+            }else{
+                throw new IllegalStateException("Channel with channelId " + channelId + " has been " + channel.getChannelState().name());
+            }
         }catch (NoSuchChannelException e){
             e.printStackTrace();
         }catch (NullObjectException e){

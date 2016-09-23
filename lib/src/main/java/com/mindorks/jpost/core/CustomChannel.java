@@ -14,7 +14,7 @@ public interface CustomChannel<Q extends PriorityBlockingQueue<? extends WeakRef
     /**
      *
      */
-    void removeChannel();
+    void terminateChannel();
 
     /**
      *

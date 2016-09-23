@@ -55,7 +55,7 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      *
      * @param channelId
      */
-    void removeChannel(Integer channelId);
+    void terminateChannel(Integer channelId);
 
     /**
      *
