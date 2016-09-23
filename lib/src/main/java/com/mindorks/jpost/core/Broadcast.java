@@ -29,7 +29,11 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @throws NullObjectException
      * @throws AlreadyExistsException
      */
-    <T>PrivateChannel createPrivateChannel(T owner, Integer channelId) throws NullObjectException, AlreadyExistsException;
+    <T>PrivateChannel createPrivateChannel(T owner, Integer channelId) throws AlreadyExistsException;
+    <T>PrivateChannel createPrivateChannel(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException;
+
+    <T>PrivateChannel createPrivateChannelAsync(T owner, Integer channelId) throws AlreadyExistsException;
+    <T>PrivateChannel createPrivateChannelAsync(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException;
 
     /**
      *
@@ -76,13 +80,13 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
 
     /**
      *
-     * @param owner
+     * @param registeredSubscriber
      * @param channelId
      * @param msg
      * @param <V>
      * @param <T>
      */
-    public <V, T> void broadcast(V owner, Integer channelId, T msg, Integer... subscribers);
+    public <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
 
     /**
      *
@@ -92,19 +96,20 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
     public <T> void broadcast(T msg);
 
     public <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers);
-    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg, Integer... subscribers);
+    public <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
     public <T> void broadcastAsync(T msg);
 
     public <T> void addSubscriber(Integer channelId, T subscriber);
-
+    public <T, V> void addSubscriber(V owner, Integer channelId, T subscriber);
     public <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId);
-
-    /**
-     *
-     * @param subscriber
-     * @param <T>
-     */
+    public <T, V> void addSubscriber(V owner, Integer channelId, T subscriber, Integer subscriberId);
     public <T> void addSubscriber(T subscriber);
+
+    public <T> void addSubscriberAsync(Integer channelId, T subscriber);
+    public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber);
+    public <T> void addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId);
+    public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId);
+    public <T> void addSubscriberAsync(T subscriber);
 
     /**
      *

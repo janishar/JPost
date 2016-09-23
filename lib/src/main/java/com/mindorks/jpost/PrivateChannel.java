@@ -30,5 +30,4 @@ public class PrivateChannel extends PublicChannel{
     public WeakReference<Object> getChannelOwnerRef() {
         return channelOwnerRef;
     }
-
 }

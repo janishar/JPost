@@ -27,12 +27,48 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <T> PrivateChannel createPrivateChannel(T owner, Integer channelId)
-            throws AlreadyExistsException {
+    public <T> PrivateChannel createPrivateChannel(T owner, Integer channelId) throws AlreadyExistsException {
         if(channelId != null){
             PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
             channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
                     ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
+            runPrivateSubscriptionTask(owner, channelId, owner, owner.hashCode());
+            return privateChannel;
+        }
+        return null;
+    }
+
+    @Override
+    public <T> PrivateChannel createPrivateChannel(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException {
+        if(channelId != null){
+            PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
+            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
+            runPrivateSubscriptionTask(owner, channelId, owner, subscriberId);
+            return privateChannel;
+        }
+        return null;
+    }
+
+    @Override
+    public <T> PrivateChannel createPrivateChannelAsync(T owner, Integer channelId) throws AlreadyExistsException {
+        if(channelId != null){
+            PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
+            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
+            executorService.execute(new PrivateMsgTasKRunner<T, T>(owner, channelId, owner, owner.hashCode()));
+            return privateChannel;
+        }
+        return null;
+    }
+
+    @Override
+    public <T> PrivateChannel createPrivateChannelAsync(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException {
+        if(channelId != null){
+            PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
+            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
+            executorService.execute(new PrivateMsgTasKRunner<T, T>(owner, channelId, owner, subscriberId));
             return privateChannel;
         }
         return null;
@@ -90,7 +126,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
     @Override
     public <T> void broadcast(T msg) {
-        runTask(Channel.DEFAULT_CHANNEL_ID, msg);
+        runBroadcastTask(Channel.DEFAULT_CHANNEL_ID, msg);
     }
 
     @Override
@@ -100,7 +136,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
     @Override
     public <T> void broadcast(Integer channelId, T msg, Integer... subscribers) {
-        runTask(channelId, msg, subscribers);
+        runBroadcastTask(channelId, msg, subscribers);
     }
 
     @Override
@@ -109,28 +145,63 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <V, T> void broadcast(V owner, Integer channelId, T msg, Integer... subscribers) {
-        runTask(owner, channelId, msg, subscribers);
+    public <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
+        runPrivateBroadcastTask(registeredSubscriber, channelId, msg, subscribers);
     }
 
     @Override
-    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg, Integer... subscribers) {
-        executorService.execute(new PrivateMsgTasKRunner<>(owner, channelId, msg, subscribers));
+    public <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
+        executorService.execute(new PrivateMsgTasKRunner<>(registeredSubscriber, channelId, msg, subscribers));
     }
 
 
     @Override
     public <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId) {
-        executorService.execute(new SubscribeTaskRunner<>(channelId, subscriber, subscriberId));
+        runSubscriptionTask(channelId, subscriber, subscriberId);
     }
 
     @Override
     public <T> void addSubscriber(T subscriber) {
-        executorService.execute(new SubscribeTaskRunner<>(Channel.DEFAULT_CHANNEL_ID, subscriber, subscriber.hashCode()));
+        runSubscriptionTask(Channel.DEFAULT_CHANNEL_ID, subscriber, subscriber.hashCode());
     }
 
     @Override
     public <T> void addSubscriber(Integer channelId, T subscriber) {
+        runSubscriptionTask(channelId, subscriber, subscriber.hashCode());
+    }
+
+    @Override
+    public <T, V> void addSubscriber(V owner, Integer channelId, T subscriber) {
+        runPrivateSubscriptionTask(owner, channelId, subscriber, subscriber.hashCode());
+    }
+
+    @Override
+    public <T, V> void addSubscriber(V owner, Integer channelId, T subscriber, Integer subscriberId) {
+        runPrivateSubscriptionTask(owner, channelId, subscriber, subscriberId);
+    }
+
+    @Override
+    public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber) {
+        runPrivateSubscriptionTask(owner, channelId, subscriber, subscriber.hashCode());
+    }
+
+    @Override
+    public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId) {
+        runPrivateSubscriptionTask(owner, channelId, subscriber, subscriberId);
+    }
+
+    @Override
+    public <T> void addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId) {
+        executorService.execute(new SubscribeTaskRunner<>(channelId, subscriber, subscriberId));
+    }
+
+    @Override
+    public <T> void addSubscriberAsync(T subscriber) {
+        executorService.execute(new SubscribeTaskRunner<>(Channel.DEFAULT_CHANNEL_ID, subscriber, subscriber.hashCode()));
+    }
+
+    @Override
+    public <T> void addSubscriberAsync(Integer channelId, T subscriber) {
         executorService.execute(new SubscribeTaskRunner<>(channelId, subscriber, subscriber.hashCode()));
     }
 
@@ -199,7 +270,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         @Override
         public void run(){
-            runTask(channelId, msg, subscribers);
+            runBroadcastTask(channelId, msg, subscribers);
         }
     }
 
@@ -207,11 +278,11 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         private Integer channelId;
         private T msg;
-        private V owner;
+        private V registeredSubscriber;
         private Integer[] subscribers;
 
-        public PrivateMsgTasKRunner(V owner, Integer channelId, T msg, Integer... subscribers) {
-            this.owner = owner;
+        public PrivateMsgTasKRunner(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
+            this.registeredSubscriber = registeredSubscriber;
             this.channelId = channelId;
             this.msg = msg;
             this.subscribers = subscribers;
@@ -220,7 +291,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         @Override
         public void run(){
-            runTask(owner, channelId, msg, subscribers);
+            runPrivateBroadcastTask(registeredSubscriber, channelId, msg, subscribers);
         }
     }
 
@@ -239,11 +310,11 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         @Override
         public void run(){
-            runTask(channelId, subscriber, subscriberId);
+            runSubscriptionTask(channelId, subscriber, subscriberId);
         }
     }
 
-    private <T>void runTask(Integer channelId, T msg, Integer... subscribers){
+    private <T>void runBroadcastTask(Integer channelId, T msg, Integer... subscribers){
         try {
             Channel channel = getChannel(channelId);
             if(channel.getChannelState() == ChannelState.OPEN){
@@ -264,22 +335,28 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         }
     }
 
-    private <V, T>void runTask(V owner, Integer channelId, T msg, Integer... subscribers) {
+    private <V, T>void runPrivateBroadcastTask(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
         try {
             Channel channel = getChannel(channelId);
             if(channel.getChannelState() == ChannelState.OPEN){
                 if(channel instanceof PrivateChannel){
                     PrivateChannel privateChannel = (PrivateChannel)channel;
-                    if(privateChannel.getChannelOwnerRef() != null && privateChannel.getChannelOwnerRef().get() != null){
-                        if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
-                            if(subscribers.length > 0) {
-                                privateChannel.broadcast(msg, subscribers);
-                            }else{
-                                privateChannel.broadcast(msg);
-                            }
-                        }else{
-                            throw new PermissionException("Only the owner of the private channel is allowed to broadcast on private channel");
+                    boolean isPermissionGranted = false;
+                    for(WeakReference weakReference : privateChannel.getSubscriberMap().values()){
+                        Object subscriber = weakReference.get();
+                        if(subscriber != null && subscriber == registeredSubscriber){
+                            isPermissionGranted = true;
+                            break;
                         }
+                    }
+                    if(isPermissionGranted) {
+                        if(subscribers.length > 0) {
+                            privateChannel.broadcast(msg, subscribers);
+                        }else{
+                            privateChannel.broadcast(msg);
+                        }
+                    }else{
+                        throw new PermissionException("Only the subscriber of the private channel is allowed to broadcast on private channel");
                     }
                 }else{
                     throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
@@ -298,9 +375,12 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         }
     }
 
-    private <T>void runTask(Integer channelId, T subscriber, Integer subscriberId){
+    private <T>void runSubscriptionTask(Integer channelId, T subscriber, Integer subscriberId){
         try {
             Channel channel = getChannel(channelId);
+            if(channel instanceof PrivateChannel){
+                throw new PermissionException("Only owner of the private channel can add a subscriber to private channel");
+            }
             if(channel.getChannelState() == ChannelState.OPEN){
                 channel.addSubscriber(subscriber, subscriberId);;
             }else{
@@ -313,6 +393,41 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         }catch (AlreadyExistsException e){
             e.printStackTrace();
         }catch (IllegalStateException e){
+            e.printStackTrace();
+        }catch (PermissionException e){
+            e.printStackTrace();
+        }
+    }
+
+    private <T, V>void runPrivateSubscriptionTask(V owner, Integer channelId, T subscriber, Integer subscriberId){
+        try {
+            Channel channel = getChannel(channelId);
+            if(channel.getChannelState() == ChannelState.OPEN){
+                if(channel instanceof PrivateChannel){
+                    PrivateChannel privateChannel = (PrivateChannel)channel;
+                    if(privateChannel.getChannelOwnerRef() != null
+                            && privateChannel.getChannelOwnerRef().get() != null){
+                        if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
+                            privateChannel.addSubscriber(subscriber, subscriberId);
+                        }else{
+                            throw new PermissionException("Only the owner of the private channel is allowed to add subscribers to private channel");
+                        }
+                    }
+                }else{
+                    throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
+                }
+            }else{
+                throw new IllegalStateException("Channel with channelId " + channelId + " has been " + channel.getChannelState().name());
+            }
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }catch (AlreadyExistsException e){
+            e.printStackTrace();
+        }catch (IllegalStateException e){
+            e.printStackTrace();
+        }catch (PermissionException e){
             e.printStackTrace();
         }
     }

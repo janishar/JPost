@@ -14,22 +14,22 @@ public class C {
         A a = new A();
         B b = new B();
         try {
-//            JPost.getBroadcastCenter().createPrivateChannel(this,2);
-            JPost.getBroadcastCenter().createPublicChannel(2);
+            JPost.getBroadcastCenter().createPrivateChannel(this, 2);
+//            JPost.getBroadcastCenter().createPublicChannel(2);
         }catch (AlreadyExistsException e){
             e.printStackTrace();
         }
-        JPost.getBroadcastCenter().addSubscriber(2, a, 1);
-        JPost.getBroadcastCenter().addSubscriber(2, b, 2);
-        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling 2", 1, 2);
+        JPost.getBroadcastCenter().addSubscriberAsync(2, a, 2);
+        JPost.getBroadcastCenter().addSubscriberAsync(this, 2, b, 3);
+        JPost.getBroadcastCenter().broadcastAsync(this, 2, "Ali calling 2", this.hashCode());
 //        JPost.getBroadcastCenter().terminateChannel(2);
 //        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling");
         JPost.shutdown();
     }
 
-    @SubscribeMsg(channelId = 1)
+    @SubscribeMsg(channelId = 2)
     private void onMsg(String name){
         System.out.println(Thread.currentThread().getName());
-        System.out.println("A onMsg " + name);
+        System.out.println("C onMsg " + name);
     }
 }
