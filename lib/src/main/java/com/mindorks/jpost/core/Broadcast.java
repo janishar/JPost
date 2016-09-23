@@ -91,6 +91,10 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      */
     public <T> void broadcast(T msg);
 
+    public <T> void broadcastAsync(Integer channelId, T msg);
+    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg);
+    public <T> void broadcastAsync(T msg);
+
     /**
      *
      * @param channelId

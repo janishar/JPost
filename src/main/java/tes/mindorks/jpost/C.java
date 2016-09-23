@@ -10,6 +10,7 @@ import com.mindorks.jpost.exceptions.AlreadyExistsException;
 public class C {
 
     public C() {
+        Thread.currentThread().setName("Thread Main");
         A a = new A();
         B b = new B();
         try {
@@ -20,12 +21,14 @@ public class C {
         }
         JPost.getBroadcastCenter().addSubscriber(2, a, 1);
         JPost.getBroadcastCenter().addSubscriber(2, b, 2);
-        JPost.getBroadcastCenter().broadcast(2, "Ali calling");
+        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling");
+        JPost.getBroadcastCenter().broadcastAsync("Ali calling");
         JPost.shutdown();
     }
 
     @SubscribeMsg(channelId = 1)
     private void onMsg(String name){
+        System.out.println(Thread.currentThread().getName());
         System.out.println("A onMsg " + name);
     }
 }

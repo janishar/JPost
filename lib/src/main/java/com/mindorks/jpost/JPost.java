@@ -1,8 +1,6 @@
 package com.mindorks.jpost;
 
-import com.mindorks.jpost.core.Broadcast;
-import com.mindorks.jpost.core.Channel;
-import com.mindorks.jpost.core.ChannelPost;
+import com.mindorks.jpost.core.*;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +22,8 @@ public class JPost {
         channelMap = new ConcurrentHashMap<>(Broadcast.CHANNEL_INITIAL_CAPACITY);
         channelMap.put(Channel.DEFAULT_CHANNEL_ID,
                 new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                        ConcurrentHashMap<Integer,WeakReference<Object>>>>(new DefaultChannel()));
+                        ConcurrentHashMap<Integer,WeakReference<Object>>>>(
+                                new DefaultChannel(Channel.DEFAULT_CHANNEL_ID, ChannelType.DEFAULT, ChannelState.OPEN)));
         broadcastCenter = new BroadcastCenter();
     }
 

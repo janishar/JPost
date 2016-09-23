@@ -2,8 +2,9 @@ package com.mindorks.jpost;
 
 import com.mindorks.jpost.annotations.SubscribeMsg;
 import com.mindorks.jpost.core.*;
-import com.mindorks.jpost.exceptions.*;
+import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
@@ -17,10 +18,10 @@ import java.util.concurrent.PriorityBlockingQueue;
  * Created by janisharali on 22/09/16.
  */
 public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-        ConcurrentHashMap<Integer,WeakReference<Object>>>{
+        ConcurrentHashMap<Integer,WeakReference<Object>>> {
 
-    public DefaultChannel() {
-        super(DEFAULT_CHANNEL_ID, ChannelState.OPEN, ChannelType.DEFAULT,  new PriorityBlockingQueue<>(MSG_QUEUE_INITIAL_CAPACITY,
+    public DefaultChannel(Integer channelId, ChannelType type, ChannelState state) {
+        super(channelId, state, type,  new PriorityBlockingQueue<>(MSG_QUEUE_INITIAL_CAPACITY,
                 new Comparator<WeakReference<ChannelPost>>() {
                     @Override
                     public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
@@ -36,19 +37,13 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
     }
 
     @Override
-    public void setChannelState(ChannelState state) {
-        super.setChannelState(ChannelState.OPEN);
-    }
-
-    @Override
     public <T> void broadcast(T msg) throws NullObjectException, IllegalStateException {
         if(super.getChannelState() != ChannelState.OPEN){
-            throw new IllegalStateException("Channel is closed");
+            throw new IllegalStateException("Channel with id " + super.getChannelId() + " is closed");
         }
         if(msg == null){
             throw new NullObjectException("subscriber is null");
         }
-
         ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
         getPostQueue().put(new WeakReference<ChannelPost>(post));
 
@@ -66,7 +61,8 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
                                     if (annotation != null) {
                                         SubscribeMsg subscribeMsg = (SubscribeMsg) annotation;
                                         int channelId = subscribeMsg.channelId();
-                                        if (getChannelId().equals(channelId)) {
+                                        boolean isCommonReceiver = subscribeMsg.isCommonReceiver();
+                                        if (isCommonReceiver || getChannelId().equals(channelId)) {
                                             try {
                                                 boolean methodFound = false;
                                                 for (final Class paramClass : method.getParameterTypes()) {

@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface SubscribeMsg {
     int channelId() default Channel.DEFAULT_CHANNEL_ID;
+    boolean isCommonReceiver() default false;
 }

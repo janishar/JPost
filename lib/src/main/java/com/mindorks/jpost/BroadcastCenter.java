@@ -114,16 +114,31 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
     @Override
     public <T> void broadcast(Integer channelId, T msg) {
-        executorService.execute(new MsgTasKRunner<T>(channelId, msg));
+        runTask(channelId, msg);
     }
 
     @Override
     public <V, T> void broadcast(V owner, Integer channelId, T msg) {
-        executorService.execute(new PrivateMsgTasKRunner<>(owner, channelId, msg));
+        runTask(owner, channelId, msg);
     }
 
     @Override
     public <T> void broadcast(T msg) {
+        runTask(Channel.DEFAULT_CHANNEL_ID, msg);
+    }
+
+    @Override
+    public <T> void broadcastAsync(Integer channelId, T msg) {
+        executorService.execute(new MsgTasKRunner<T>(channelId, msg));
+    }
+
+    @Override
+    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg) {
+        executorService.execute(new PrivateMsgTasKRunner<>(owner, channelId, msg));
+    }
+
+    @Override
+    public <T> void broadcastAsync(T msg) {
         executorService.execute(new MsgTasKRunner<>(Channel.DEFAULT_CHANNEL_ID, msg));
     }
 
@@ -155,16 +170,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         @Override
         public void run(){
-            try {
-                Channel channel = getChannel(channelId);
-                channel.broadcast(msg);
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (IllegalStateException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }
+            runTask(channelId, msg);
         }
     }
 
@@ -183,29 +189,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         @Override
         public void run(){
-            try {
-                Channel channel = getChannel(channelId);
-                if(channel instanceof PrivateChannel){
-                    PrivateChannel privateChannel = (PrivateChannel)channel;
-                    if(privateChannel.getChannelOwnerRef() != null && privateChannel.getChannelOwnerRef().get() != null){
-                        if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
-                            privateChannel.broadcast(msg);
-                        }else{
-                            throw new PermissionException("Only the owner of the private channel is allowed to broadcast on private channel");
-                        }
-                    }
-                }else{
-                    throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
-                }
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (IllegalStateException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (PermissionException e){
-                e.printStackTrace();
-            }
+            runTask(owner, channelId, msg);
         }
     }
 
@@ -224,19 +208,61 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         @Override
         public void run(){
-            try {
-                Channel channel = getChannel(channelId);
-                channel.addSubscriber(subscriber, subscriberId);
-                int a = 1;
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (AlreadyExistsException e){
-                e.printStackTrace();
-            }catch (IllegalStateException e){
-                e.printStackTrace();
+            runTask(channelId, subscriber, subscriberId);
+        }
+    }
+
+    private <T>void runTask(Integer channelId, T msg){
+        try {
+            Channel channel = getChannel(channelId);
+            channel.broadcast(msg);
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (IllegalStateException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }
+    }
+
+    private <V, T>void runTask(V owner, Integer channelId, T msg) {
+        try {
+            Channel channel = getChannel(channelId);
+            if(channel instanceof PrivateChannel){
+                PrivateChannel privateChannel = (PrivateChannel)channel;
+                if(privateChannel.getChannelOwnerRef() != null && privateChannel.getChannelOwnerRef().get() != null){
+                    if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
+                        privateChannel.broadcast(msg);
+                    }else{
+                        throw new PermissionException("Only the owner of the private channel is allowed to broadcast on private channel");
+                    }
+                }
+            }else{
+                throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
             }
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (IllegalStateException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }catch (PermissionException e){
+            e.printStackTrace();
+        }
+    }
+
+    private <T>void runTask(Integer channelId, T subscriber, Integer subscriberId){
+        try {
+            Channel channel = getChannel(channelId);
+            channel.addSubscriber(subscriber, subscriberId);
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }catch (AlreadyExistsException e){
+            e.printStackTrace();
+        }catch (IllegalStateException e){
+            e.printStackTrace();
         }
     }
 }
