@@ -51,30 +51,6 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <T> PrivateChannel createPrivateChannelAsync(T owner, Integer channelId) throws AlreadyExistsException {
-        if(channelId != null){
-            PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
-            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
-            executorService.execute(new PrivateMsgTasKRunner<T, T>(owner, channelId, owner, owner.hashCode()));
-            return privateChannel;
-        }
-        return null;
-    }
-
-    @Override
-    public <T> PrivateChannel createPrivateChannelAsync(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException {
-        if(channelId != null){
-            PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
-            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
-            executorService.execute(new PrivateMsgTasKRunner<T, T>(owner, channelId, owner, subscriberId));
-            return privateChannel;
-        }
-        return null;
-    }
-
-    @Override
     public PublicChannel createPublicChannel(Integer channelId) throws AlreadyExistsException {
         if(channelId == null){
             System.out.println("channelId is null");
@@ -203,6 +179,30 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     @Override
     public <T> void addSubscriberAsync(Integer channelId, T subscriber) {
         executorService.execute(new SubscribeTaskRunner<>(channelId, subscriber, subscriber.hashCode()));
+    }
+
+    @Override
+    public <T> void removeSubscriber(T subscriber) {
+        try {
+            Channel channel = getChannel(Channel.DEFAULT_CHANNEL_ID);
+            channel.removeSubscriber(subscriber);
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public <T> void removeSubscriber(Integer channelId, T subscriber) {
+        try {
+            Channel channel = getChannel(channelId);
+            channel.removeSubscriber(subscriber);
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

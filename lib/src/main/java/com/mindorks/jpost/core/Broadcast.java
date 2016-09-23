@@ -31,10 +31,6 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      */
     <T>PrivateChannel createPrivateChannel(T owner, Integer channelId) throws AlreadyExistsException;
     <T>PrivateChannel createPrivateChannel(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException;
-
-    <T>PrivateChannel createPrivateChannelAsync(T owner, Integer channelId) throws AlreadyExistsException;
-    <T>PrivateChannel createPrivateChannelAsync(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException;
-
     /**
      *
      * @param channelId
@@ -110,6 +106,10 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
     public <T> void addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId);
     public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId);
     public <T> void addSubscriberAsync(T subscriber);
+
+
+    public <T> void removeSubscriber(T subscriber);
+    public <T> void removeSubscriber(Integer channelId, T subscriber);
 
     /**
      *

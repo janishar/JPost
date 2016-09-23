@@ -22,6 +22,7 @@ public class C {
         JPost.getBroadcastCenter().addSubscriberAsync(2, a, 2);
         JPost.getBroadcastCenter().addSubscriberAsync(this, 2, b, 3);
         JPost.getBroadcastCenter().broadcastAsync(this, 2, "Ali calling 2", this.hashCode());
+
 //        JPost.getBroadcastCenter().terminateChannel(2);
 //        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling");
         JPost.shutdown();

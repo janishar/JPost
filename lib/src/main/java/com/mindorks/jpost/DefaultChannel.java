@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -112,5 +113,21 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
         }
         super.getSubscriberMap().put(subscriberId, new WeakReference<Object>(subscriber));
         return subscriber;
+    }
+
+    @Override
+    public <T> void removeSubscriber(T subscriber) throws NullObjectException {
+        if(subscriber == null){
+            throw new NullObjectException("subscriber is null");
+        }
+        Iterator<WeakReference<Object>> iterator = getSubscriberMap().values().iterator();
+        while (iterator.hasNext()){
+            WeakReference<Object> weakReference = iterator.next();
+            Object subscriberObj = weakReference.get();
+            if(subscriberObj != null && subscriberObj == subscriber){
+                getSubscriberMap().remove(weakReference);
+                break;
+            }
+        }
     }
 }
