@@ -42,7 +42,7 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
             throw new IllegalStateException("Channel with id " + super.getChannelId() + " is closed");
         }
         if(msg == null){
-            throw new NullObjectException("subscriber is null");
+            throw new NullObjectException("message is null");
         }
         ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
         getPostQueue().put(new WeakReference<ChannelPost>(post));

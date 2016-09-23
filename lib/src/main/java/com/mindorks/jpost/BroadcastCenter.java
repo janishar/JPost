@@ -89,34 +89,35 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <T> void broadcast(Integer channelId, T msg) {
-        runTask(channelId, msg);
-    }
-
-    @Override
-    public <V, T> void broadcast(V owner, Integer channelId, T msg) {
-        runTask(owner, channelId, msg);
-    }
-
-    @Override
     public <T> void broadcast(T msg) {
         runTask(Channel.DEFAULT_CHANNEL_ID, msg);
-    }
-
-    @Override
-    public <T> void broadcastAsync(Integer channelId, T msg) {
-        executorService.execute(new MsgTasKRunner<T>(channelId, msg));
-    }
-
-    @Override
-    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg) {
-        executorService.execute(new PrivateMsgTasKRunner<>(owner, channelId, msg));
     }
 
     @Override
     public <T> void broadcastAsync(T msg) {
         executorService.execute(new MsgTasKRunner<>(Channel.DEFAULT_CHANNEL_ID, msg));
     }
+
+    @Override
+    public <T> void broadcast(Integer channelId, T msg, Integer... subscribers) {
+        runTask(channelId, msg, subscribers);
+    }
+
+    @Override
+    public <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers) {
+        executorService.execute(new MsgTasKRunner<T>(channelId, msg, subscribers));
+    }
+
+    @Override
+    public <V, T> void broadcast(V owner, Integer channelId, T msg, Integer... subscribers) {
+        runTask(owner, channelId, msg, subscribers);
+    }
+
+    @Override
+    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg, Integer... subscribers) {
+        executorService.execute(new PrivateMsgTasKRunner<>(owner, channelId, msg, subscribers));
+    }
+
 
     @Override
     public <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId) {
@@ -126,6 +127,11 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     @Override
     public <T> void addSubscriber(T subscriber) {
         executorService.execute(new SubscribeTaskRunner<>(Channel.DEFAULT_CHANNEL_ID, subscriber, subscriber.hashCode()));
+    }
+
+    @Override
+    public <T> void addSubscriber(Integer channelId, T subscriber) {
+        executorService.execute(new SubscribeTaskRunner<>(channelId, subscriber, subscriber.hashCode()));
     }
 
     @Override
@@ -182,16 +188,18 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
 
         private Integer channelId;
         private T msg;
+        private Integer[] subscribers;
 
-        public MsgTasKRunner(Integer channelId, T msg) {
+        public MsgTasKRunner(Integer channelId, T msg, Integer... subscribers) {
             this.channelId = channelId;
             this.msg = msg;
+            this.subscribers = subscribers;
             new Thread(this, String.valueOf(channelId));
         }
 
         @Override
         public void run(){
-            runTask(channelId, msg);
+            runTask(channelId, msg, subscribers);
         }
     }
 
@@ -200,17 +208,19 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         private Integer channelId;
         private T msg;
         private V owner;
+        private Integer[] subscribers;
 
-        public PrivateMsgTasKRunner(V owner, Integer channelId, T msg) {
+        public PrivateMsgTasKRunner(V owner, Integer channelId, T msg, Integer... subscribers) {
             this.owner = owner;
             this.channelId = channelId;
             this.msg = msg;
+            this.subscribers = subscribers;
             new Thread(this, String.valueOf(channelId));
         }
 
         @Override
         public void run(){
-            runTask(owner, channelId, msg);
+            runTask(owner, channelId, msg, subscribers);
         }
     }
 
@@ -233,11 +243,15 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         }
     }
 
-    private <T>void runTask(Integer channelId, T msg){
+    private <T>void runTask(Integer channelId, T msg, Integer... subscribers){
         try {
             Channel channel = getChannel(channelId);
             if(channel.getChannelState() == ChannelState.OPEN){
-                channel.broadcast(msg);
+                if(channel instanceof PublicChannel && subscribers.length > 0){
+                    ((PublicChannel)channel).broadcast(msg, subscribers);
+                }else {
+                    channel.broadcast(msg);
+                }
             }else{
                 throw new IllegalStateException("Channel with channelId " + channelId + " has been " + channel.getChannelState());
             }
@@ -250,7 +264,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         }
     }
 
-    private <V, T>void runTask(V owner, Integer channelId, T msg) {
+    private <V, T>void runTask(V owner, Integer channelId, T msg, Integer... subscribers) {
         try {
             Channel channel = getChannel(channelId);
             if(channel.getChannelState() == ChannelState.OPEN){
@@ -258,7 +272,11 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
                     PrivateChannel privateChannel = (PrivateChannel)channel;
                     if(privateChannel.getChannelOwnerRef() != null && privateChannel.getChannelOwnerRef().get() != null){
                         if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
-                            privateChannel.broadcast(msg);
+                            if(subscribers.length > 0) {
+                                privateChannel.broadcast(msg, subscribers);
+                            }else{
+                                privateChannel.broadcast(msg);
+                            }
                         }else{
                             throw new PermissionException("Only the owner of the private channel is allowed to broadcast on private channel");
                         }

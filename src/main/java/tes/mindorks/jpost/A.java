@@ -13,7 +13,7 @@ public class A {
         JPost.getBroadcastCenter().addSubscriber(this);
     }
 
-    @SubscribeMsg(isCommonReceiver = false)
+    @SubscribeMsg(channelId = 2)
     private void onMsg(String name){
         System.out.println(Thread.currentThread().getName());
         System.out.println("A onMsg " + name);

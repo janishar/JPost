@@ -74,5 +74,10 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
      * @throws IllegalStateException
      */
     <T> T addSubscriber(T subscriber, Integer subscriberId) throws NullObjectException, AlreadyExistsException, IllegalStateException;
+
+    /**
+     *
+     * @return
+     */
     Collection<? extends WeakReference<?>> getAllSubscribersReferenceList();
 }

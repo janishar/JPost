@@ -72,7 +72,7 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param msg
      * @param <T>
      */
-    public <T> void broadcast(Integer channelId, T msg);
+    public <T> void broadcast(Integer channelId, T msg, Integer... subscribers);
 
     /**
      *
@@ -82,7 +82,7 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param <V>
      * @param <T>
      */
-    public <V, T> void broadcast(V owner, Integer channelId, T msg);
+    public <V, T> void broadcast(V owner, Integer channelId, T msg, Integer... subscribers);
 
     /**
      *
@@ -91,17 +91,12 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      */
     public <T> void broadcast(T msg);
 
-    public <T> void broadcastAsync(Integer channelId, T msg);
-    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg);
+    public <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers);
+    public <V, T> void broadcastAsync(V owner, Integer channelId, T msg, Integer... subscribers);
     public <T> void broadcastAsync(T msg);
 
-    /**
-     *
-     * @param channelId
-     * @param subscriber
-     * @param subscriberId
-     * @param <T>
-     */
+    public <T> void addSubscriber(Integer channelId, T subscriber);
+
     public <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId);
 
     /**

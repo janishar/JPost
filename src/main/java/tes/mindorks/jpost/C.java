@@ -19,13 +19,9 @@ public class C {
         }catch (AlreadyExistsException e){
             e.printStackTrace();
         }
-        JPost.shutdown();
-        JPost.reboot();
         JPost.getBroadcastCenter().addSubscriber(2, a, 1);
         JPost.getBroadcastCenter().addSubscriber(2, b, 2);
-        JPost.getBroadcastCenter().stopChannel(2);
-        JPost.getBroadcastCenter().reopenChannel(2);
-        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling 2");
+        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling 2", 1, 2);
 //        JPost.getBroadcastCenter().terminateChannel(2);
 //        JPost.getBroadcastCenter().broadcastAsync(2, "Ali calling");
         JPost.shutdown();
