@@ -110,6 +110,7 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
 
     public <T> void removeSubscriber(T subscriber);
     public <T> void removeSubscriber(Integer channelId, T subscriber);
+    public <T> void removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId);
 
     /**
      *

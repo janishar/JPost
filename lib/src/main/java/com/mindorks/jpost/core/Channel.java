@@ -76,7 +76,7 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
     <T> T addSubscriber(T subscriber, Integer subscriberId) throws NullObjectException, AlreadyExistsException, IllegalStateException;
 
 
-    <T> void removeSubscriber(T subscriber) throws NullObjectException;
+    <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidPropertyException;
 
 
     /**

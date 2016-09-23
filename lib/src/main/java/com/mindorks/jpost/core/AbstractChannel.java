@@ -2,6 +2,7 @@ package com.mindorks.jpost.core;
 
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.InvalidPropertyException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.ref.WeakReference;
@@ -71,4 +72,7 @@ public abstract class AbstractChannel<Q extends PriorityBlockingQueue<? extends 
     public abstract <T> T addSubscriber(T subscriber, Integer subscriberId)
             throws NullObjectException, AlreadyExistsException, IllegalStateException;
 
+    @Override
+    public abstract <T> void removeSubscriber(T subscriber)
+            throws NullObjectException, InvalidPropertyException;
 }

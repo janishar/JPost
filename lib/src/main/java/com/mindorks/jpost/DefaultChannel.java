@@ -4,6 +4,7 @@ import com.mindorks.jpost.annotations.SubscribeMsg;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.InvalidPropertyException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.annotation.Annotation;
@@ -49,49 +50,48 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
         getPostQueue().put(new WeakReference<ChannelPost>(post));
 
         while (!getPostQueue().isEmpty()) {
-            try {
-                WeakReference<ChannelPost> msgRef = getPostQueue().take();
-                ChannelPost mspPost = msgRef.get();
-                if (mspPost != null && mspPost.getChannelId() != null) {
-                    if(mspPost.getChannelId().equals(getChannelId())) {
-                        for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
-                            Object subscriberObj = subscriberRef.get();
-                            if (subscriberObj != null) {
-                                for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
-                                    Annotation annotation = method.getAnnotation(SubscribeMsg.class);
-                                    if (annotation != null) {
-                                        SubscribeMsg subscribeMsg = (SubscribeMsg) annotation;
-                                        int channelId = subscribeMsg.channelId();
-                                        boolean isCommonReceiver = subscribeMsg.isCommonReceiver();
-                                        if (isCommonReceiver || getChannelId().equals(channelId)) {
-                                            try {
-                                                boolean methodFound = false;
-                                                for (final Class paramClass : method.getParameterTypes()) {
-                                                    if (paramClass.equals(mspPost.getMessage().getClass())) {
-                                                        methodFound = true;
-                                                        break;
-                                                    }
+            WeakReference<ChannelPost> msgRef = getPostQueue().poll();
+            if (msgRef == null) {
+                return;
+            }
+            ChannelPost mspPost = msgRef.get();
+            if (mspPost != null && mspPost.getChannelId() != null) {
+                if (mspPost.getChannelId().equals(getChannelId())) {
+                    for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
+                        Object subscriberObj = subscriberRef.get();
+                        if (subscriberObj != null) {
+                            for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
+                                Annotation annotation = method.getAnnotation(SubscribeMsg.class);
+                                if (annotation != null) {
+                                    SubscribeMsg subscribeMsg = (SubscribeMsg) annotation;
+                                    int channelId = subscribeMsg.channelId();
+                                    boolean isCommonReceiver = subscribeMsg.isCommonReceiver();
+                                    if (isCommonReceiver || getChannelId().equals(channelId)) {
+                                        try {
+                                            boolean methodFound = false;
+                                            for (final Class paramClass : method.getParameterTypes()) {
+                                                if (paramClass.equals(mspPost.getMessage().getClass())) {
+                                                    methodFound = true;
+                                                    break;
                                                 }
-                                                if (methodFound) {
-                                                    method.setAccessible(true);
-                                                    method.invoke(subscriberObj, mspPost.getMessage());
-                                                }
-                                            } catch (IllegalAccessException e) {
-                                                e.printStackTrace();
-                                            } catch (InvocationTargetException e) {
-                                                e.printStackTrace();
                                             }
+                                            if (methodFound) {
+                                                method.setAccessible(true);
+                                                method.invoke(subscriberObj, mspPost.getMessage());
+                                            }
+                                        } catch (IllegalAccessException e) {
+                                            e.printStackTrace();
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
                                         }
                                     }
                                 }
                             }
                         }
-                    }else{
-                        getPostQueue().put(msgRef);
                     }
+                } else {
+                    getPostQueue().offer(msgRef);
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -116,18 +116,23 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
     }
 
     @Override
-    public <T> void removeSubscriber(T subscriber) throws NullObjectException {
+    public synchronized <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidPropertyException {
         if(subscriber == null){
             throw new NullObjectException("subscriber is null");
         }
+        boolean isRemoved = false;
         Iterator<WeakReference<Object>> iterator = getSubscriberMap().values().iterator();
         while (iterator.hasNext()){
             WeakReference<Object> weakReference = iterator.next();
             Object subscriberObj = weakReference.get();
             if(subscriberObj != null && subscriberObj == subscriber){
-                getSubscriberMap().remove(weakReference);
+                getSubscriberMap().values().remove(weakReference);
+                isRemoved = true;
                 break;
             }
+        }
+        if(!isRemoved){
+            throw new InvalidPropertyException("Subscriber  do not exists");
         }
     }
 }

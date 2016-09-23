@@ -20,6 +20,7 @@ public class JPost {
             ConcurrentHashMap<Integer,WeakReference<Object>>>>> channelMap;
 
     private static BroadcastCenter broadcastCenter;
+    private static int threadCount = Runtime.getRuntime().availableProcessors() + 1;
 
     static {
         channelMap = new ConcurrentHashMap<>(Broadcast.CHANNEL_INITIAL_CAPACITY);
@@ -30,7 +31,7 @@ public class JPost {
         broadcastCenter = new BroadcastCenter();
     }
 
-    protected static ExecutorService executorService = Executors.newCachedThreadPool();
+    protected static ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
     public static BroadcastCenter getBroadcastCenter(){
         return broadcastCenter;
@@ -38,7 +39,7 @@ public class JPost {
 
     public static void reboot(){
         JPostBootLock.lock();
-        executorService = Executors.newCachedThreadPool();;
+        executorService = Executors.newFixedThreadPool(threadCount);
         JPostBootLock.unlock();
     }
 

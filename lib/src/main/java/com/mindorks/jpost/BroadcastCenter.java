@@ -190,6 +190,8 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
             e.printStackTrace();
         }catch (NullObjectException e){
             e.printStackTrace();
+        }catch (InvalidPropertyException e){
+            e.printStackTrace();
         }
     }
 
@@ -201,6 +203,41 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         }catch (NoSuchChannelException e){
             e.printStackTrace();
         }catch (NullObjectException e){
+            e.printStackTrace();
+        }catch (InvalidPropertyException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public <T> void removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId) {
+        try {
+            Channel channel = getChannel(channelId);
+            if(channel instanceof PrivateChannel){
+                PrivateChannel privateChannel = (PrivateChannel)channel;
+                boolean isPermissionGranted = false;
+                for(WeakReference weakReference : privateChannel.getSubscriberMap().values()){
+                    Object subscriber = weakReference.get();
+                    if(subscriber != null && subscriber == registeredSubscriber){
+                        isPermissionGranted = true;
+                        break;
+                    }
+                }
+                if(isPermissionGranted) {
+                    privateChannel.removeSubscriber(subscriberId);
+                }else{
+                    throw new PermissionException("Only the subscriber of the private channel is allowed to broadcast on private channel");
+                }
+            }else{
+                throw new NoSuchChannelException("No private channel with channelId " + channelId + " exists");
+            }
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }catch (PermissionException e){
+            e.printStackTrace();
+        }catch (InvalidPropertyException e){
             e.printStackTrace();
         }
     }
