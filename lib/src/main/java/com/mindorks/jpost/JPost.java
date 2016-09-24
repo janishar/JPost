@@ -47,4 +47,10 @@ public class JPost {
         executorService.shutdown();
         JPostBootLock.unlock();
     }
+
+    public static void haltAndShutdown(){
+        JPostBootLock.lock();
+        executorService.shutdownNow();
+        JPostBootLock.unlock();
+    }
 }

@@ -1,6 +1,6 @@
 package com.mindorks.jpost;
 
-import com.mindorks.jpost.annotations.SubscribeMsg;
+import com.mindorks.jpost.annotations.OnMessage;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
@@ -64,11 +64,11 @@ public class PublicChannel extends DefaultChannel
                                 Object subscriberObj = subscriberRef.get();
                                 if (subscriberObj != null) {
                                     for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
-                                        Annotation annotation = method.getAnnotation(SubscribeMsg.class);
+                                        Annotation annotation = method.getAnnotation(OnMessage.class);
                                         if (annotation != null) {
-                                            SubscribeMsg subscribeMsg = (SubscribeMsg) annotation;
-                                            int channelId = subscribeMsg.channelId();
-                                            boolean isCommonReceiver = subscribeMsg.isCommonReceiver();
+                                            OnMessage onMessageAnnotation = (OnMessage) annotation;
+                                            int channelId = onMessageAnnotation.channelId();
+                                            boolean isCommonReceiver = onMessageAnnotation.isCommonReceiver();
                                             if (isCommonReceiver || getChannelId().equals(channelId)) {
                                                 try {
                                                     boolean methodFound = false;

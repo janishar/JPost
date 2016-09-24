@@ -1,7 +1,5 @@
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.exceptions.InvalidPropertyException;
-import com.mindorks.jpost.exceptions.NoSuchChannelException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 

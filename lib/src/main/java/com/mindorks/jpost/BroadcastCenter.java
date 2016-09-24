@@ -5,8 +5,7 @@ import com.mindorks.jpost.exceptions.*;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
@@ -127,7 +126,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <T> void broadcast(T msg) {
+    public <T> void broadcast(T msg){
         try {
             runBroadcastTask(Channel.DEFAULT_CHANNEL_ID, msg);
         }catch (NoSuchChannelException e){
@@ -140,12 +139,15 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <T> void broadcastAsync(T msg) {
+    public <T> void broadcastAsync(T msg) throws JPostNotRunningException{
+        if(executorService.isShutdown()){
+            throw new JPostNotRunningException("JPost is shutdown");
+        }
         executorService.execute(new MsgTasKRunner<>(Channel.DEFAULT_CHANNEL_ID, msg));
     }
 
     @Override
-    public <T> void broadcast(Integer channelId, T msg, Integer... subscribers) {
+    public <T> void broadcast(Integer channelId, T msg, Integer... subscribers){
         try {
             runBroadcastTask(channelId, msg, subscribers);
         }catch (NoSuchChannelException e){
@@ -158,12 +160,15 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers) {
+    public <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers) throws JPostNotRunningException{
+        if(executorService.isShutdown()){
+            throw new JPostNotRunningException("JPost is shutdown");
+        }
         executorService.execute(new MsgTasKRunner<T>(channelId, msg, subscribers));
     }
 
     @Override
-    public <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
+    public <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers){
         try {
             runPrivateBroadcastTask(registeredSubscriber, channelId, msg, subscribers);
         }catch (NoSuchChannelException e){
@@ -178,7 +183,10 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
+    public <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) throws JPostNotRunningException{
+        if(executorService.isShutdown()){
+            throw new JPostNotRunningException("JPost is shutdown");
+        }
         executorService.execute(new PrivateMsgTasKRunner<>(registeredSubscriber, channelId, msg, subscribers));
     }
 
@@ -288,7 +296,13 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     }
 
     @Override
-    public List<Objects> getAllSubscribers(Integer channelId) throws NoSuchChannelException {
+    public Collection<WeakReference<Object>> getAllSubscribersWeakRef(Integer channelId) throws NoSuchChannelException {
+        try {
+            Channel channel = getChannel(channelId);
+            return channel.getAllSubscribersReferenceList();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }
         return null;
     }
 

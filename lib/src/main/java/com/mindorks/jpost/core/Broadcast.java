@@ -6,8 +6,7 @@ import com.mindorks.jpost.exceptions.*;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -107,7 +106,7 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param subscribers
      * @param <T>
      */
-     <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers);
+     <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers)throws JPostNotRunningException;
 
     /**
      *
@@ -118,14 +117,14 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param <V>
      * @param <T>
      */
-     <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
+     <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)throws JPostNotRunningException;
 
     /**
      *
      * @param msg
      * @param <T>
      */
-     <T> void broadcastAsync(T msg);
+     <T> void broadcastAsync(T msg)throws JPostNotRunningException;
 
     /**
      *
@@ -263,5 +262,5 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @return
      * @throws NoSuchChannelException
      */
-     List<Objects> getAllSubscribers(Integer channelId) throws NoSuchChannelException;
+     Collection<? extends WeakReference<?>> getAllSubscribersWeakRef(Integer channelId) throws NoSuchChannelException;
 }

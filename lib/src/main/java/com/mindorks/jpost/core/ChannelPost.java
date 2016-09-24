@@ -1,6 +1,5 @@
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.core.Post;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.util.List;

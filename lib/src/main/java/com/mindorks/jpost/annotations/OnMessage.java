@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SubscribeMsg {
+public @interface OnMessage {
     int channelId() default Channel.DEFAULT_CHANNEL_ID;
     boolean isCommonReceiver() default false;
 }
