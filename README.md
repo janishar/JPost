@@ -1,4 +1,8 @@
 # JPost (Java class communication library)
+[![GitHub version](https://badge.fury.io/gh/janishar%2FJPost.svg)](https://badge.fury.io/gh/janishar%2FJPost)
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 #Intro
 ###This library is designed for the communication between classes in java by sending and receiving messages. Messages can be any object.
 The design of this library is such that the modularity of the code is enhanced and provide a controlled system for sending and receiving messages. One of the key advantages of this library is that the message handling can be done both synchronusly(if the sender thread is same as the receiver thread) or asynchronously as provided. All the subscribing classes are holded with weakreferences, hense the memory leak do not take place. The usecases in which this library's power can be understood is when compared to other pub/sub libraries. Situations in which many instances of a single class requrire to process messages based on the sender. Example: A class wants to send message to few of the instances of the same class. The schema diagram provided below will provide a better insight.
