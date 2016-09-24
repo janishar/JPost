@@ -1,6 +1,6 @@
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.ref.WeakReference;
@@ -14,20 +14,20 @@ public interface CustomChannel<Q extends PriorityBlockingQueue<? extends WeakRef
         M extends ConcurrentHashMap<? extends Integer,? extends WeakReference<?>>>
         extends Channel<Q, M>{
 
-    /**
-     *
-     */
+
     void terminateChannel();
 
-    /**
-     *
-     */
     void startChannel();
 
-    /**
-     *
-     */
     void stopChannel();
 
-    <T>void broadcast(T msg, Integer... subscriberIds) throws NullObjectException, IllegalStateException;
+    /**
+     *
+     * @param msg
+     * @param subscriberIds
+     * @param <T>
+     * @throws NullObjectException
+     * @throws IllegalChannelStateException
+     */
+    <T>void broadcast(T msg, Integer... subscriberIds) throws NullObjectException, IllegalChannelStateException;
 }

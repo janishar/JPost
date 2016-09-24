@@ -2,9 +2,8 @@ package com.mindorks.jpost.core;
 
 import com.mindorks.jpost.PrivateChannel;
 import com.mindorks.jpost.PublicChannel;
-import com.mindorks.jpost.exceptions.AlreadyExistsException;
-import com.mindorks.jpost.exceptions.NoSuchChannelException;
-import com.mindorks.jpost.exceptions.NullObjectException;
+import com.mindorks.jpost.exceptions.*;
+import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -26,10 +25,19 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param channelId
      * @param <T>
      * @return
-     * @throws NullObjectException
      * @throws AlreadyExistsException
      */
     <T>PrivateChannel createPrivateChannel(T owner, Integer channelId) throws AlreadyExistsException;
+
+    /**
+     *
+     * @param owner
+     * @param channelId
+     * @param subscriberId
+     * @param <T>
+     * @return
+     * @throws AlreadyExistsException
+     */
     <T>PrivateChannel createPrivateChannel(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException;
     /**
      *
@@ -72,17 +80,18 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param msg
      * @param <T>
      */
-    public <T> void broadcast(Integer channelId, T msg, Integer... subscribers);
+     <T> void broadcast(Integer channelId, T msg, Integer... subscribers);
 
     /**
      *
      * @param registeredSubscriber
      * @param channelId
      * @param msg
+     * @param subscribers
      * @param <V>
      * @param <T>
      */
-    public <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
+     <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
 
     /**
      *
@@ -91,26 +100,162 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      */
     public <T> void broadcast(T msg);
 
-    public <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers);
-    public <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
-    public <T> void broadcastAsync(T msg);
+    /**
+     *
+     * @param channelId
+     * @param msg
+     * @param subscribers
+     * @param <T>
+     */
+     <T> void broadcastAsync(Integer channelId, T msg, Integer... subscribers);
 
-    public <T> void addSubscriber(Integer channelId, T subscriber);
-    public <T, V> void addSubscriber(V owner, Integer channelId, T subscriber);
-    public <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId);
-    public <T, V> void addSubscriber(V owner, Integer channelId, T subscriber, Integer subscriberId);
-    public <T> void addSubscriber(T subscriber);
+    /**
+     *
+     * @param registeredSubscriber
+     * @param channelId
+     * @param msg
+     * @param subscribers
+     * @param <V>
+     * @param <T>
+     */
+     <V, T> void broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers);
 
-    public <T> void addSubscriberAsync(Integer channelId, T subscriber);
-    public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber);
-    public <T> void addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId);
-    public <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId);
-    public <T> void addSubscriberAsync(T subscriber);
+    /**
+     *
+     * @param msg
+     * @param <T>
+     */
+     <T> void broadcastAsync(T msg);
 
+    /**
+     *
+     * @param channelId
+     * @param subscriber
+     * @param <T>
+     * @throws NoSuchChannelException
+     * @throws AlreadyExistsException
+     * @throws PermissionException
+     * @throws IllegalChannelStateException
+     * @throws NullObjectException
+     */
+     <T> void addSubscriber(Integer channelId, T subscriber)
+             throws NoSuchChannelException, AlreadyExistsException, PermissionException, IllegalChannelStateException, NullObjectException;
 
-    public <T> void removeSubscriber(T subscriber);
-    public <T> void removeSubscriber(Integer channelId, T subscriber);
-    public <T> void removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId);
+    /**
+     *
+     * @param owner
+     * @param channelId
+     * @param subscriber
+     * @param <T>
+     * @param <V>
+     * @throws NoSuchChannelException
+     * @throws AlreadyExistsException
+     * @throws PermissionException
+     * @throws IllegalChannelStateException
+     * @throws NullObjectException
+     */
+     <T, V> void addSubscriber(V owner, Integer channelId, T subscriber)
+             throws NoSuchChannelException, AlreadyExistsException, PermissionException, IllegalChannelStateException, NullObjectException;
+
+    /**
+     *
+     * @param channelId
+     * @param subscriber
+     * @param subscriberId
+     * @param <T>
+     * @throws NoSuchChannelException
+     * @throws AlreadyExistsException
+     * @throws PermissionException
+     * @throws IllegalChannelStateException
+     * @throws NullObjectException
+     */
+    <T> void addSubscriber(Integer channelId, T subscriber, Integer subscriberId)
+             throws NoSuchChannelException, AlreadyExistsException, PermissionException, IllegalChannelStateException, NullObjectException;
+
+    <T, V> void addSubscriber(V owner, Integer channelId, T subscriber, Integer subscriberId)
+             throws NoSuchChannelException, AlreadyExistsException, PermissionException, IllegalChannelStateException, NullObjectException;
+
+    /**
+     *
+     * @param subscriber
+     * @param <T>
+     * @throws AlreadyExistsException
+     * @throws NullObjectException
+     */
+    <T> void addSubscriber(T subscriber)
+             throws AlreadyExistsException, NullObjectException;
+
+    /**
+     *
+     * @param channelId
+     * @param subscriber
+     * @param <T>
+     */
+     <T> void addSubscriberAsync(Integer channelId, T subscriber);
+
+    /**
+     *
+     * @param owner
+     * @param channelId
+     * @param subscriber
+     * @param <T>
+     * @param <V>
+     */
+    <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber);
+
+    /**
+     *
+     * @param channelId
+     * @param subscriber
+     * @param subscriberId
+     * @param <T>
+     */
+     <T> void addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId);
+
+    /**
+     *
+     * @param owner
+     * @param channelId
+     * @param subscriber
+     * @param subscriberId
+     * @param <T>
+     * @param <V>
+     */
+     <T, V> void addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId);
+
+    /**
+     *
+     * @param subscriber
+     * @param <T>
+     */
+     <T> void addSubscriberAsync(T subscriber);
+
+    /**
+     *
+     * @param subscriber
+     * @param <T>
+     */
+     <T> void removeSubscriber(T subscriber)
+             throws InvalidPropertyException, NoSuchChannelException, NullObjectException;
+
+    /**
+     *
+     * @param channelId
+     * @param subscriber
+     * @param <T>
+     */
+     <T> void removeSubscriber(Integer channelId, T subscriber)
+             throws InvalidPropertyException, NoSuchChannelException, NullObjectException;
+
+    /**
+     *
+     * @param registeredSubscriber
+     * @param channelId
+     * @param subscriberId
+     * @param <T>
+     */
+     <T> void removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId)
+             throws InvalidPropertyException, NoSuchChannelException, PermissionException, NullObjectException;
 
     /**
      *
@@ -118,5 +263,5 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @return
      * @throws NoSuchChannelException
      */
-    public List<Objects> getAllSubscribers(Integer channelId) throws NoSuchChannelException;
+     List<Objects> getAllSubscribers(Integer channelId) throws NoSuchChannelException;
 }

@@ -10,7 +10,11 @@ public class A {
 
     public A() {
         Thread.currentThread().setName("Thread Main");
-        JPost.getBroadcastCenter().addSubscriber(this);
+        try {
+            JPost.getBroadcastCenter().addSubscriber(this);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @SubscribeMsg(channelId = 2)

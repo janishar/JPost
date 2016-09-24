@@ -3,7 +3,7 @@ package com.mindorks.jpost;
 import com.mindorks.jpost.annotations.SubscribeMsg;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
-import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 import com.mindorks.jpost.exceptions.InvalidPropertyException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
@@ -39,9 +39,9 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
     }
 
     @Override
-    public <T> void broadcast(T msg) throws NullObjectException, IllegalStateException {
+    public <T> void broadcast(T msg) throws NullObjectException, IllegalChannelStateException {
         if(super.getChannelState() != ChannelState.OPEN){
-            throw new IllegalStateException("Channel with id " + super.getChannelId() + " is closed");
+            throw new IllegalChannelStateException("Channel with id " + super.getChannelId() + " is closed");
         }
         if(msg == null){
             throw new NullObjectException("message is null");
@@ -98,9 +98,9 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
 
     @Override
     public <T> T addSubscriber(T subscriber, Integer subscriberId )
-            throws NullObjectException, AlreadyExistsException, IllegalStateException {
+            throws NullObjectException, AlreadyExistsException, IllegalChannelStateException {
         if(super.getChannelState() != ChannelState.OPEN){
-            throw new IllegalStateException("Channel with id " + super.getChannelId() + " is closed");
+            throw new IllegalChannelStateException("Channel with id " + super.getChannelId() + " is closed");
         }
         if(subscriber == null){
             throw new NullObjectException("subscriber is null");

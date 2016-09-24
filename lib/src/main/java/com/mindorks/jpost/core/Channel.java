@@ -1,7 +1,7 @@
 package com.mindorks.jpost.core;
 
 import com.mindorks.jpost.exceptions.*;
-import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -59,9 +59,9 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
      * @param msg
      * @param <T>
      * @throws NullObjectException
-     * @throws IllegalStateException
+     * @throws IllegalChannelStateException
      */
-    <T>void broadcast(T msg) throws NullObjectException, IllegalStateException;
+    <T>void broadcast(T msg) throws NullObjectException, IllegalChannelStateException;
 
     /**
      *
@@ -71,11 +71,17 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
      * @return
      * @throws NullObjectException
      * @throws AlreadyExistsException
-     * @throws IllegalStateException
+     * @throws IllegalChannelStateException
      */
-    <T> T addSubscriber(T subscriber, Integer subscriberId) throws NullObjectException, AlreadyExistsException, IllegalStateException;
+    <T> T addSubscriber(T subscriber, Integer subscriberId) throws NullObjectException, AlreadyExistsException, IllegalChannelStateException;
 
-
+    /**
+     *
+     * @param subscriber
+     * @param <T>
+     * @throws NullObjectException
+     * @throws InvalidPropertyException
+     */
     <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidPropertyException;
 
 

@@ -3,7 +3,7 @@ package com.mindorks.jpost;
 import com.mindorks.jpost.annotations.SubscribeMsg;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.core.ChannelPost;
-import com.mindorks.jpost.exceptions.IllegalStateException;
+import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.annotation.Annotation;
@@ -42,9 +42,9 @@ public class PublicChannel extends DefaultChannel
     }
 
     @Override
-    public <T> void broadcast(T msg, Integer... subscriberIds) throws NullObjectException, IllegalStateException {
+    public <T> void broadcast(T msg, Integer... subscriberIds) throws NullObjectException, IllegalChannelStateException {
         if(super.getChannelState() != ChannelState.OPEN){
-            throw new IllegalStateException("Channel with id " + super.getChannelId() + " is closed");
+            throw new IllegalChannelStateException("Channel with id " + super.getChannelId() + " is closed");
         }
         if(msg == null){
             throw new NullObjectException("message is null");
