@@ -16,8 +16,8 @@ public class JPost {
 
     private static ReentrantLock JPostBootLock = new ReentrantLock();
 
-    protected static ConcurrentHashMap<Integer, WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-            ConcurrentHashMap<Integer,WeakReference<Object>>>>> channelMap;
+    protected static ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap;
 
     private static BroadcastCenter broadcastCenter;
     private static DefaultChannel channel;
@@ -26,9 +26,7 @@ public class JPost {
     static {
         channelMap = new ConcurrentHashMap<>(Broadcast.CHANNEL_INITIAL_CAPACITY);
         channel = new DefaultChannel(Channel.DEFAULT_CHANNEL_ID, ChannelType.DEFAULT, ChannelState.OPEN);
-        channelMap.put(Channel.DEFAULT_CHANNEL_ID,
-                new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                        ConcurrentHashMap<Integer,WeakReference<Object>>>>(channel));
+        channelMap.put(Channel.DEFAULT_CHANNEL_ID, channel);
         broadcastCenter = new BroadcastCenter();
     }
 

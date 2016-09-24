@@ -30,8 +30,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     public <T> PrivateChannel createPrivateChannel(T owner, Integer channelId) throws AlreadyExistsException {
         if(channelId != null){
             PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
-            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
+            channelMap.put(channelId, privateChannel);
             runPrivateSubscriptionTask(owner, channelId, owner, owner.hashCode());
             return privateChannel;
         }
@@ -42,8 +41,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
     public <T> PrivateChannel createPrivateChannel(T owner, Integer channelId, Integer subscriberId) throws AlreadyExistsException {
         if(channelId != null){
             PrivateChannel privateChannel = new PrivateChannel(new WeakReference<Object>(owner), channelId, ChannelType.PRIVATE, ChannelState.OPEN);
-            channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                    ConcurrentHashMap<Integer,WeakReference<Object>>>>(privateChannel));
+            channelMap.put(channelId, privateChannel);
             runPrivateSubscriptionTask(owner, channelId, owner, subscriberId);
             return privateChannel;
         }
@@ -60,8 +58,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
             throw new AlreadyExistsException("Channel with id " + channelId + " already exists");
         }
         PublicChannel publicChannel = new PublicChannel(channelId, ChannelType.PUBLIC, ChannelState.OPEN);
-        channelMap.put(channelId, new WeakReference<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                ConcurrentHashMap<Integer, WeakReference<Object>>>>(publicChannel));
+        channelMap.put(channelId, publicChannel);
         return publicChannel;
     }
 
@@ -93,11 +90,7 @@ public class BroadcastCenter implements Broadcast<Channel<PriorityBlockingQueue<
         if(channelMap.get(channelId) == null){
             throw new NoSuchChannelException("Channel with id " + channelId + " does not exists");
         }
-        if(channelMap.get(channelId).get() == null){
-            throw new NoSuchChannelException("Channel with id " + channelId + " has been garbage collected");
-        }
-
-        return channelMap.get(channelId).get();
+        return channelMap.get(channelId);
     }
 
     @Override
