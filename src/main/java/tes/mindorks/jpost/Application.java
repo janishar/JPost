@@ -4,6 +4,7 @@ package tes.mindorks.jpost;
 import com.mindorks.jpost.JPost;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.JPostNotRunningException;
+import com.mindorks.jpost.exceptions.NoSuchChannelException;
 import tes.mindorks.jpost.message.Message1;
 import tes.mindorks.jpost.message.Message2;
 import tes.mindorks.jpost.message.Message3;
@@ -12,6 +13,9 @@ import tes.mindorks.jpost.subscriber.SubscriberA;
 import tes.mindorks.jpost.subscriber.SubscriberB;
 import tes.mindorks.jpost.subscriber.SubscriberC;
 import tes.mindorks.jpost.subscriber.SubscriberD;
+
+import java.lang.ref.WeakReference;
+import java.util.Collection;
 
 /**
  * Created by janisharali on 21/09/16.
@@ -46,6 +50,13 @@ public class Application {
             e.printStackTrace();
         }
         JPost.getBroadcastCenter().broadcast(ChannelIds.publicChannel1, new Message4("Application sending public message"));
+
+        try {
+            Collection<WeakReference<Object>> collection = JPost.getBroadcastCenter().getAllSubscribersWeakRef(ChannelIds.publicChannel1);
+            System.out.println("publicChannel1 subscribers count " + collection.size());
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }
 
         JPost.shutdown();
     }

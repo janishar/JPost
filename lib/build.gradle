@@ -2,7 +2,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.1-dev2'
+def ver = '1.0.0-alpha'
 group 'com.mindorks'
 version ver
 
