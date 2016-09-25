@@ -35,6 +35,11 @@ The design of this library is such that the modularity of the code is enhanced a
 
 # Gradle
 ```java
+repositories {
+    maven {
+        url 'https://dl.bintray.com/janishar/mindorks/'
+    }
+}
 dependencies {
     compile 'com.mindorks:jpost:0.0.1'
 }
