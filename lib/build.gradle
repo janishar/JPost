@@ -2,7 +2,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '1.0.0-snapshot'
+def ver = '0.0.1'
 group 'com.mindorks'
 version ver
 
@@ -42,8 +42,10 @@ publishing {
     }
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+try {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+} catch (all) {}
 
 bintray {
     user = properties.getProperty('bintray.user')
@@ -55,7 +57,7 @@ bintray {
         name = 'jpost'
 
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/janishar/jPost.git'
+        vcsUrl = 'https://github.com/janishar/JPost.git'
         labels = ['java', 'communication', 'class', "modular code","pub-sub"]
         publicDownloadNumbers = true
         version {
