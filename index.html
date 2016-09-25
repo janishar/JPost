@@ -33,21 +33,21 @@
 <h3>
 <a id="this-library-is-designed-for-the-communication-between-classes-in-java-by-sending-and-receiving-messages-messages-can-be-any-object" class="anchor" href="#this-library-is-designed-for-the-communication-between-classes-in-java-by-sending-and-receiving-messages-messages-can-be-any-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This library is designed for the communication between classes in java by sending and receiving messages. Messages can be any object.</h3>
 
-<p>The design of this library is such that the modularity of the code is enhanced and provide a controlled system for sending and receiving messages. One of the key advantages of this library is that the message handling can be done both synchronusly(if the sender thread is same as the receiver thread) or asynchronously as provided. All the subscribing classes are holded with weakreferences, hense the memory leak do not take place. The usecases in which this library's power can be understood is when compared to other pub/sub libraries. Situations in which many instances of a single class requrire to process messages based on the sender. Example: A class wants to send message to few of the instances of the same class. The schema diagram provided below will provide a better insight.</p>
+<p>The design of this library is such that the modularity of the code is enhanced and provide a controlled system for sending and receiving messages. One of the key advantages of this library is that the message handling can be done both synchronusly(if the sender thread is same as the receiver thread) or asynchronously as provided. All the subscribing classes are holded with weakreferences, hense the memory leak do not take place. The usecases in which this library's power can be understood is when compared to other pub/sub libraries. Situations in which many instances of a single class require to process messages based on the sender. Example: A class wants to send message to few of the instances of the same class. The schema diagram provided below will provide a better insight.</p>
 
 <hr>
 
 <h1>
 <a id="library-design-overview" class="anchor" href="#library-design-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Library Design Overview</h1>
 
-<h2>
-<a id="the-channel-through-which-communication-can-be-done-is-categorised-into-three-categories" class="anchor" href="#the-channel-through-which-communication-can-be-done-is-categorised-into-three-categories" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The channel through which communication can be done is categorised into three categories:</h2>
+<h3>
+<a id="the-channels-through-which-communication-can-be-done-is-categorised-into-three-categories" class="anchor" href="#the-channels-through-which-communication-can-be-done-is-categorised-into-three-categories" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The channels through which communication can be done is categorised into three categories:</h3>
 
 <ol>
 <li>
-<strong>Default Channel</strong>: This is the prebuilt channel and allowes global communication. When subscribed to this channel, the class can send messages to all the subscribed classes with message type, on this channel.</li>
+<strong>Default Channel</strong>: This is the prebuilt channel and allows global communication. When subscribed to this channel, the class can send messages to all the subscribed classes with message type, on this channel.</li>
 <li>
-<strong>Public Channel</strong>: This channel is designed for filtered communication. Public channels are required to be created and the subscribers of this channel can receive messages broadcasted to this channel. The messaged can also be send to selected subscribes.</li>
+<strong>Public Channel</strong>: This channel is designed for filtered communication. Public channels are created and the subscribers of this channel can receive messages broadcasted to this channel. The messages can also be send to selected subscribes.</li>
 <li>
 <strong>Private Channel</strong>: This channel is designed to control the access to the channel. The private channels need to be created and stores the owner information. Only the owner can add new subscribers. The messages can be interchanged between any combination of the added subscribers.</li>
 </ol>
@@ -75,14 +75,25 @@
 
 <hr>
 
+<h2>
+<a id="if-this-library-helps-you-in-anyway-show-your-love-heart-by-putting-a-star-on-this-project-v" class="anchor" href="#if-this-library-helps-you-in-anyway-show-your-love-heart-by-putting-a-star-on-this-project-v" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If this library helps you in anyway, show your love <g-emoji alias="heart" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/2764.png">❤️</g-emoji> by putting a <g-emoji alias="star" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/2b50.png">⭐</g-emoji> on this project <g-emoji alias="v" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/270c.png">✌️</g-emoji>
+</h2>
+
+<h1>
+<a id="gradle" class="anchor" href="#gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle</h1>
+
+<div class="highlight highlight-source-java"><pre>dependencies {
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.mindorks:jpost:1.0.0-snapshot<span class="pl-pds">'</span></span>
+}</pre></div>
+
 <h1>
 <a id="library-classes-overview" class="anchor" href="#library-classes-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Library Classes Overview</h1>
 
 <h1>
 <a id="jpost" class="anchor" href="#jpost" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JPost</h1>
 
-<h2>
-<a id="the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" class="anchor" href="#the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The one point entry for this library is the class JPost. It contains static methods to access BroadcastCenter class and core functionality related to the library management.</h2>
+<h3>
+<a id="the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" class="anchor" href="#the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The one point entry for this library is the class JPost. It contains static methods to access BroadcastCenter class and core functionality related to the library management.</h3>
 
 <h2>
 <a id="methods" class="anchor" href="#methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Methods</h2>
@@ -93,7 +104,7 @@
 <li>
 <strong>JPost.shutdown()</strong>: This method closes the JPost for the async operations and removes all the pool threads. It should called when the program terminates or as required. This call let the message delivery already in process to continue.</li>
 <li>
-<strong>JPost.haltAndShutdown()</strong>: This method does the same operation as do the <strong><em>JPost.shutdown()</em></strong> but it also removes all the message delivery tasks.;</li>
+<strong>JPost.haltAndShutdown()</strong>: This method does the same operation as do the <strong>JPost.shutdown()</strong> but it also removes all the message delivery tasks.;</li>
 </ol>
 
 <hr>
@@ -101,8 +112,8 @@
 <h1>
 <a id="broadcastcenter" class="anchor" href="#broadcastcenter" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BroadcastCenter</h1>
 
-<h2>
-<a id="this-class-proivdes-all-the-functionality-attached-with-this-library" class="anchor" href="#this-class-proivdes-all-the-functionality-attached-with-this-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This class proivdes all the functionality attached with this library.</h2>
+<h3>
+<a id="this-class-proivdes-all-the-functionality-attached-with-this-library" class="anchor" href="#this-class-proivdes-all-the-functionality-attached-with-this-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This class proivdes all the functionality attached with this library.</h3>
 
 <h2>
 <a id="methods-1" class="anchor" href="#methods-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Methods</h2>
@@ -111,7 +122,7 @@
 <li>
 <strong>createPrivateChannel(T owner, Integer channelId)</strong>: Creates a private channel requiring a unique int channel id. The owner is assigned owner.hashCode() as subscriber id.</li>
 <li>
-<strong>createPrivateChannel(T owner, Integer channelId, Integer subscriberId)</strong>: Creates a private channel requiring a unique int channel id. The owner is subscriberId as subscriber id.</li>
+<strong>createPrivateChannel(T owner, Integer channelId, Integer subscriberId)</strong>: Creates a private channel requiring a unique int channel id. The owner is given subscriberId as subscriber id.</li>
 <li>
 <strong>createPublicChannel(Integer channelId)</strong>: Creates a public channel requiring a unique int channel id.</li>
 <li>
@@ -162,16 +173,231 @@
 <strong>getAllSubscribersWeakRef()</strong>: returns a collection of weakreference holding the subscriber. </li>
 </ol>
 
-<h1>
-<a id="if-this-library-helps-you-in-anyway-show-your-love-heart-by-putting-a-star-on-this-project-v" class="anchor" href="#if-this-library-helps-you-in-anyway-show-your-love-heart-by-putting-a-star-on-this-project-v" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If this library helps you in anyway, show your love <g-emoji alias="heart" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/2764.png">❤️</g-emoji> by putting a <g-emoji alias="star" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/2b50.png">⭐</g-emoji> on this project <g-emoji alias="v" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/270c.png">✌️</g-emoji>
-</h1>
+<hr>
 
 <h1>
-<a id="gradle" class="anchor" href="#gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle</h1>
+<a id="receiving-messages" class="anchor" href="#receiving-messages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receiving Messages</h1>
 
-<div class="highlight highlight-source-java"><pre>dependencies {
-    compile <span class="pl-s"><span class="pl-pds">'</span>com.mindorks:jpost:1.0.0-snapshot<span class="pl-pds">'</span></span>
-}</pre></div>
+<h3>
+<a id="the-messages-are-received-via-onmessage-method-annotation-the-class-subscribing-any-message-has-to-create-a-method-with-message-object-as-the-parameter-and-annotate-it-with-onmessage" class="anchor" href="#the-messages-are-received-via-onmessage-method-annotation-the-class-subscribing-any-message-has-to-create-a-method-with-message-object-as-the-parameter-and-annotate-it-with-onmessage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The messages are received via OnMessage method annotation. The class subscribing any message has to create a method with message object as the parameter and annotate it with <a href="https://github.com/OnMessage" class="user-mention">@OnMessage</a>.</h3>
+
+<h3>
+<a id="onmessage-parameters" class="anchor" href="#onmessage-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="https://github.com/OnMessage" class="user-mention">@OnMessage</a> Parameters</h3>
+
+<ol>
+<li>
+<strong>channelId</strong>: This parameter in the annotation, attaches the message reception to a particular channel on which the class has subscribed. If not provided will be listening to the default global channel.</li>
+<li>
+<strong>isCommonReceiver</strong>: This parameter sets the message reception from any channel on which the class has subscribed.</li>
+</ol>
+
+<h2>
+<a id="example-1-sending-and-receiving-messages-over-default-global-channel" class="anchor" href="#example-1-sending-and-receiving-messages-over-default-global-channel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 1: Sending and receiving messages over default global channel</h2>
+
+<h3>
+<a id="step-1-create-a-message-class-that-will-be-passed-on-the-channel-for-broadcasting" class="anchor" href="#step-1-create-a-message-class-that-will-be-passed-on-the-channel-for-broadcasting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 1: Create a message class that will be passed on the channel for broadcasting.</h3>
+
+<div class="highlight highlight-source-java"><pre>   <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Message1</span> {
+
+     <span class="pl-k">private</span> <span class="pl-smi">String</span> msg;
+
+     <span class="pl-k">public</span> <span class="pl-en">Message1</span>(<span class="pl-smi">String</span> <span class="pl-v">msg</span>) {
+          <span class="pl-v">this</span><span class="pl-k">.</span>msg <span class="pl-k">=</span> msg;
+     }
+
+     <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">getMsg</span>() {
+         <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>Message1: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> msg;
+     }
+
+     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">setMsg</span>(<span class="pl-smi">String</span> <span class="pl-v">msg</span>) {
+          <span class="pl-v">this</span><span class="pl-k">.</span>msg <span class="pl-k">=</span> msg;
+      }
+   }</pre></div>
+
+<h3>
+<a id="step-2-subscribe-the-class-to-the-default-global-channel" class="anchor" href="#step-2-subscribe-the-class-to-the-default-global-channel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 2: Subscribe the class to the default global channel</h3>
+
+<h3>
+<a id="step-3-attach-the-message-to-a-recipient-class" class="anchor" href="#step-3-attach-the-message-to-a-recipient-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 3: Attach the message to a recipient class</h3>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">public</span> SubscriberA() {
+        <span class="pl-k">try</span> {
+            <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-v">this</span>);
+        }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }
+
+        <span class="pl-k">try</span> {
+            <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-v">this</span>);
+        }<span class="pl-k">catch</span> (<span class="pl-smi">Exception</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }
+    }
+
+    <span class="pl-k">@OnMessage</span>
+    <span class="pl-k">private</span> <span class="pl-k">void</span> onMessage1(<span class="pl-smi">Message1</span> msg){
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>SubscriberA: <span class="pl-pds">"</span></span><span class="pl-k">+</span> msg<span class="pl-k">.</span>getMsg());
+    }</pre></div>
+
+<h3>
+<a id="step-4-send-the-message-to-the-class" class="anchor" href="#step-4-send-the-message-to-the-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 4: Send the message to the class</h3>
+
+<div class="highlight highlight-source-java"><pre>   <span class="pl-c">//TO SEND THROUGH THE CLASS RUNNING THREAD USER</span>
+   <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>broadcast(<span class="pl-k">new</span> <span class="pl-smi">Message1</span>(<span class="pl-s"><span class="pl-pds">"</span>Application sending message<span class="pl-pds">"</span></span>));
+
+   <span class="pl-c">// TO SEND ASYNCHRONOUSLY</span>
+   <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>broadcastAsync(<span class="pl-k">new</span> <span class="pl-smi">Message2</span>(<span class="pl-s"><span class="pl-pds">"</span>Application sending message<span class="pl-pds">"</span></span>));
+    }<span class="pl-k">catch</span> (<span class="pl-smi">JPostNotRunningException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }</pre></div>
+
+<h2>
+<a id="example-2-creating-public-channel-and-sending-and-receiving-messages-over-it" class="anchor" href="#example-2-creating-public-channel-and-sending-and-receiving-messages-over-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 2: Creating public channel and sending and receiving messages over it</h2>
+
+<h3>
+<a id="step-1-create-message-class-this-is-same-as-above-expamle-1" class="anchor" href="#step-1-create-message-class-this-is-same-as-above-expamle-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 1: Create Message class. This is same as above expamle 1.</h3>
+
+<h3>
+<a id="step-2-create-a-public-channel-and-give-it-a-unique-id" class="anchor" href="#step-2-create-a-public-channel-and-give-it-a-unique-id" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 2: Create a public channel and give it a unique id.</h3>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">class</span> <span class="pl-en">ChannelIds</span>{
+        <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-k">int</span> publicChannel1 <span class="pl-k">=</span> <span class="pl-c1">1</span>;
+    }
+
+    <span class="pl-c1">.....</span>
+    <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>createPublicChannel(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1);
+    }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }</pre></div>
+
+<h3>
+<a id="step-3-subscribe-and-attach-a-message-recipient-to-a-class" class="anchor" href="#step-3-subscribe-and-attach-a-message-recipient-to-a-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 3: Subscribe and attach a message recipient to a class</h3>
+
+<div class="highlight highlight-source-java"><pre>     <span class="pl-k">public</span> SubscriberA() {
+        <span class="pl-k">try</span> {
+            <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-v">this</span>);
+
+            <span class="pl-c">// TO ADD SUBSCRIBER ASYNCHRONOUSLY </span>
+            <span class="pl-c">// JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);</span>
+        }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }<span class="pl-k">catch</span> (<span class="pl-smi">NoSuchChannelException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }<span class="pl-k">catch</span> (<span class="pl-smi">IllegalChannelStateException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
+            e<span class="pl-k">.</span>printStackTrace();
+        }
+    }
+
+    <span class="pl-k">@OnMessage</span>(<span class="pl-c1">channelId</span> <span class="pl-k">=</span> <span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1)
+    <span class="pl-k">private</span> <span class="pl-k">void</span> onMessage1(<span class="pl-smi">Message1</span> msg){
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>SubscriberA: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> msg<span class="pl-k">.</span>getMsg());
+    }</pre></div>
+
+<h3>
+<a id="step-4-send-message-via-public-channel" class="anchor" href="#step-4-send-message-via-public-channel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 4: Send Message via public channel</h3>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-c">//TO SEND THROUGH THE CLASS RUNNING THREAD USER</span>
+    <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>broadcast(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-k">new</span> <span class="pl-smi">Message1</span>(<span class="pl-s"><span class="pl-pds">"</span>Application sending public message<span class="pl-pds">"</span></span>));
+
+    <span class="pl-c">// TO SEND ASYNCHRONOUSLY</span>
+    <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>broadcastAsync(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-k">new</span> <span class="pl-smi">Message1</span>(<span class="pl-s"><span class="pl-pds">"</span>Application sending public async message<span class="pl-pds">"</span></span>));
+    }<span class="pl-k">catch</span> (<span class="pl-smi">JPostNotRunningException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }</pre></div>
+
+<h2>
+<a id="example-3-creating-private-channel-adding-subscribersonly-creatorowner-of-the-channel-has-adding-subscribers-right-and-sending-and-receiving-messages-over-it" class="anchor" href="#example-3-creating-private-channel-adding-subscribersonly-creatorowner-of-the-channel-has-adding-subscribers-right-and-sending-and-receiving-messages-over-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 3: Creating private channel, adding subscribers(Only creator/owner of the channel has adding subscribers right) and sending and receiving messages over it</h2>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ChannelIds</span> {
+        <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-k">int</span> publicChannel1 <span class="pl-k">=</span> <span class="pl-c1">1</span>;
+        <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-k">int</span> privateChannel1 <span class="pl-k">=</span> <span class="pl-c1">2</span>;
+    }
+
+    <span class="pl-c">// CREATING PRIVATE CHANNEL</span>
+    <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>createPrivateChannel(<span class="pl-v">this</span>, <span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>privateChannel1);
+    }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }
+
+    <span class="pl-c">// ADDING </span>
+    <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-v">this</span>, <span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>privateChannel1, subscriberA);
+    }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">NoSuchChannelException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">IllegalChannelStateException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }
+
+    <span class="pl-c">// SUBSCRIBING PRIVATE MESSAGES</span>
+    <span class="pl-k">@OnMessage</span>(<span class="pl-c1">channelId</span> <span class="pl-k">=</span> <span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>privateChannel1)
+    <span class="pl-k">private</span> <span class="pl-k">void</span> onMessage1(<span class="pl-smi">Message1</span> msg){
+        <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>SubscriberD: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> msg<span class="pl-k">.</span>getMsg());
+    }
+</pre></div>
+
+<h1>
+<a id="interesting-usage" class="anchor" href="#interesting-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Interesting Usage</h1>
+
+<h3>
+<a id="1-the-subscribers-are-added-with-unique-ids-if-id-is-not-provided-then-its-hashcode-is-taken-as-the-id" class="anchor" href="#1-the-subscribers-are-added-with-unique-ids-if-id-is-not-provided-then-its-hashcode-is-taken-as-the-id" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. The subscribers are added with unique ids. If id is not provided then its hashcode is taken as the id.</h3>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">int</span> subscriberId <span class="pl-k">=</span> <span class="pl-c1">1</span>;
+    <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-v">this</span>, subscriberId);
+    }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">NoSuchChannelException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">IllegalChannelStateException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }</pre></div>
+
+<h3>
+<a id="2-the-message-can-also-be-send-to-select-subscribers-on-the-channel" class="anchor" href="#2-the-message-can-also-be-send-to-select-subscribers-on-the-channel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. The message can also be send to select subscribers on the channel</h3>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">int</span> subscriberId1 <span class="pl-k">=</span> <span class="pl-c1">1</span>;
+    <span class="pl-k">int</span> subscriberId2 <span class="pl-k">=</span> <span class="pl-c1">2</span>;
+    <span class="pl-k">try</span> {
+        <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>broadcastAsync(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, 
+                <span class="pl-k">new</span> <span class="pl-smi">Message1</span>(<span class="pl-s"><span class="pl-pds">"</span>Application sending public message<span class="pl-pds">"</span></span>), subscriberId1, subscriberId2);
+    }<span class="pl-k">catch</span> (<span class="pl-smi">JPostNotRunningException</span> e){
+        e<span class="pl-k">.</span>printStackTrace();
+    }</pre></div>
+
+<h1>
+<a id="android-note" class="anchor" href="#android-note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Android Note:</h1>
+
+<h3>
+<a id="if-the-ui-has-to-be-updated-with-the-message-then-attach-a-runnable" class="anchor" href="#if-the-ui-has-to-be-updated-with-the-message-then-attach-a-runnable" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If the UI has to be updated with the message then attach a runnable</h3>
+
+<div class="highlight highlight-source-java"><pre>  <span class="pl-k">@OnMessage</span>
+    <span class="pl-k">private</span> <span class="pl-k">void</span> onMessage(<span class="pl-k">final</span> <span class="pl-smi">Message</span> msg){
+        <span class="pl-v">this</span><span class="pl-k">.</span>runOnUiThread(<span class="pl-k">new</span> <span class="pl-smi">Runnable</span>() {
+            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+                textView<span class="pl-k">.</span>setText(msg<span class="pl-k">.</span>getMsg());
+            }
+        });
+    }</pre></div>
 
 <h1>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
