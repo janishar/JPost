@@ -1,4 +1,5 @@
 # JPost (Java class communication library)
+[![Build Status](https://travis-ci.org/janishar/JPost.svg?branch=master)](https://travis-ci.org/janishar/JPost)
 [ ![Download](https://api.bintray.com/packages/janishar/mindorks/jpost/images/download.svg) ](https://bintray.com/janishar/mindorks/jpost/_latestVersion)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
