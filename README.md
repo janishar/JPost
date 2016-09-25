@@ -19,13 +19,13 @@ The design of this library is such that the modularity of the code is enhanced a
 </br>
 <p align="center">
   <img src="https://github.com/janishar/janishar.github.io/blob/master/images/jpost_viz.png" width="400">
-  <h3 align="center">Communication Model</h1>
+  <h4 align="center">Communication Model</h4>
 </p>
 </br>
 </br>
 <p align="center">
   <img src="https://github.com/janishar/janishar.github.io/blob/master/images/jpost_exe_viz.png" width="750">
-  <h3 align="center">Execution Model</h1>
+  <h4 align="center">Execution Model</h4>
 </p>
 </br>
 </br>
@@ -35,11 +35,6 @@ The design of this library is such that the modularity of the code is enhanced a
 
 # Gradle
 ```java
-repositories {
-    maven {
-        url 'https://dl.bintray.com/janishar/mindorks/'
-    }
-}
 dependencies {
     compile 'com.mindorks:jpost:0.0.1'
 }
