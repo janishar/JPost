@@ -1,18 +1,17 @@
 # JPost (Java class communication library)
-[![GitHub version](https://badge.fury.io/gh/janishar%2FJPost.svg)](https://badge.fury.io/gh/janishar%2FJPost)
 [ ![Download](https://api.bintray.com/packages/janishar/mindorks/jpost/images/download.svg) ](https://bintray.com/janishar/mindorks/jpost/_latestVersion)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-#Intro
-###This library is designed for the communication between classes in java by sending and receiving messages. Messages can be any object.
-The design of this library is such that the modularity of the code is enhanced and provide a controlled system for sending and receiving messages. One of the key advantages of this library is that the message handling can be done both synchronusly(if the sender thread is same as the receiver thread) or asynchronously as provided. All the subscribing classes are holded with weakreferences, hense the memory leak do not take place. The usecases in which this library's power can be understood is when compared to other pub/sub libraries. Situations in which many instances of a single class requrire to process messages based on the sender. Example: A class wants to send message to few of the instances of the same class. The schema diagram provided below will provide a better insight.
+# Intro
+### This library is designed for the communication between classes in java by sending and receiving messages. Messages can be any object.
+The design of this library is such that the modularity of the code is enhanced and provide a controlled system for sending and receiving messages. One of the key advantages of this library is that the message handling can be done both synchronusly(if the sender thread is same as the receiver thread) or asynchronously as provided. All the subscribing classes are holded with weakreferences, hense the memory leak do not take place. The usecases in which this library's power can be understood is when compared to other pub/sub libraries. Situations in which many instances of a single class require to process messages based on the sender. Example: A class wants to send message to few of the instances of the same class. The schema diagram provided below will provide a better insight.
 <hr />
 
-#Library Design Overview
-##The channel through which communication can be done is categorised into three categories:
-1. **Default Channel**: This is the prebuilt channel and allowes global communication. When subscribed to this channel, the class can send messages to all the subscribed classes with message type, on this channel.
-2. **Public Channel**: This channel is designed for filtered communication. Public channels are required to be created and the subscribers of this channel can receive messages broadcasted to this channel. The messaged can also be send to selected subscribes.
+# Library Design Overview
+### The channels through which communication can be done is categorised into three categories:
+1. **Default Channel**: This is the prebuilt channel and allows global communication. When subscribed to this channel, the class can send messages to all the subscribed classes with message type, on this channel.
+2. **Public Channel**: This channel is designed for filtered communication. Public channels are created and the subscribers of this channel can receive messages broadcasted to this channel. The messages can also be send to selected subscribes.
 3. **Private Channel**: This channel is designed to control the access to the channel. The private channels need to be created and stores the owner information. Only the owner can add new subscribers. The messages can be interchanged between any combination of the added subscribers.
 
 </br>
@@ -31,21 +30,30 @@ The design of this library is such that the modularity of the code is enhanced a
 </br>
 <hr />
 
-#Library Classes Overview
-#JPost
-##The one point entry for this library is the class JPost. It contains static methods to access BroadcastCenter class and core functionality related to the library management.
-##Methods
+## If this library helps you in anyway, show your love :heart: by putting a :star: on this project :v:
+
+# Gradle
+```java
+dependencies {
+    compile 'com.mindorks:jpost:0.0.1'
+}
+```
+
+# Library Classes Overview
+# JPost
+### The one point entry for this library is the class JPost. It contains static methods to access BroadcastCenter class and core functionality related to the library management.
+## Methods
 1. **JPost.getBroadcastCenter()**: This method is used to get the instance of BroadcastCenter class (BroadcastCenter is described below)
 2. **JPost.shutdown()**: This method closes the JPost for the async operations and removes all the pool threads. It should called when the program terminates or as required. This call let the message delivery already in process to continue.
-3. **JPost.haltAndShutdown()**: This method does the same operation as do the **_JPost.shutdown()_** but it also removes all the message delivery tasks.;
+3. **JPost.haltAndShutdown()**: This method does the same operation as do the **JPost.shutdown()** but it also removes all the message delivery tasks.;
 
 <hr />
 
-#BroadcastCenter
-## This class proivdes all the functionality attached with this library. 
-##Methods
+# BroadcastCenter
+### This class proivdes all the functionality attached with this library. 
+## Methods
 1. **createPrivateChannel(T owner, Integer channelId)**: Creates a private channel requiring a unique int channel id. The owner is assigned owner.hashCode() as subscriber id.
-2. **createPrivateChannel(T owner, Integer channelId, Integer subscriberId)**: Creates a private channel requiring a unique int channel id. The owner is subscriberId as subscriber id.
+2. **createPrivateChannel(T owner, Integer channelId, Integer subscriberId)**: Creates a private channel requiring a unique int channel id. The owner is given subscriberId as subscriber id.
 3. **createPublicChannel(Integer channelId)**: Creates a public channel requiring a unique int channel id.
 4. **stopChannel(Integer channelId)**: Stops the channel with channel id temporarily.
 5. **reopenChannel(Integer channelId)**: Reopen the channel which has been stopped but not terminated.
@@ -71,15 +79,215 @@ The design of this library is such that the modularity of the code is enhanced a
 25. **removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId)**: Removes subscriber form a private channel. Only registered subscribers of the private channel can remove a subscriber.
 26. **getAllSubscribersWeakRef()**: returns a collection of weakreference holding the subscriber. 
 
-#If this library helps you in anyway, show your love :heart: by putting a :star: on this project :v:
+<hr />
 
-#Gradle
+# Receiving Messages
+### The messages are received via OnMessage method annotation. The class subscribing any message has to create a method with message object as the parameter and annotate it with @OnMessage.
+
+### @OnMessage Parameters
+1. **channelId**: This parameter in the annotation, attaches the message reception to a particular channel on which the class has subscribed. If not provided will be listening to the default global channel.
+2. **isCommonReceiver**: This parameter sets the message reception from any channel on which the class has subscribed.
+
+## Example 1: Sending and receiving messages over default global channel
+
+### Step 1: Create a message class that will be passed on the channel for broadcasting.
+
 ```java
-dependencies {
-    compile 'com.mindorks:jpost:1.0.0-snapshot'
-}
+   public class Message1 {
+
+     private String msg;
+
+     public Message1(String msg) {
+          this.msg = msg;
+     }
+
+     public String getMsg() {
+         return "Message1: " + msg;
+     }
+
+     public void setMsg(String msg) {
+          this.msg = msg;
+      }
+   }
 ```
-#License
+### Step 2: Subscribe the class to the default global channel
+### Step 3: Attach the message to a recipient class
+
+```java
+    public SubscriberA() {
+        try {
+            JPost.getBroadcastCenter().addSubscriber(this);
+        }catch (AlreadyExistsException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }
+
+        try {
+            JPost.getBroadcastCenter().addSubscriber(ChannelIds.publicChannel1, this);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    @OnMessage
+    private void onMessage1(Message1 msg){
+        System.out.println("SubscriberA: "+ msg.getMsg());
+    }
+```
+
+### Step 4: Send the message to the class
+```java
+   //TO SEND THROUGH THE CLASS RUNNING THREAD USER
+   JPost.getBroadcastCenter().broadcast(new Message1("Application sending message"));
+   
+   // TO SEND ASYNCHRONOUSLY
+   try {
+        JPost.getBroadcastCenter().broadcastAsync(new Message2("Application sending message"));
+    }catch (JPostNotRunningException e){
+        e.printStackTrace();
+    }
+```
+
+## Example 2: Creating public channel and sending and receiving messages over it
+
+### Step 1: Create Message class. This is same as above expamle 1.
+
+### Step 2: Create a public channel and give it a unique id.
+
+```java
+    class ChannelIds{
+        public static final int publicChannel1 = 1;
+    }
+    
+    .....
+    try {
+        JPost.getBroadcastCenter().createPublicChannel(ChannelIds.publicChannel1);
+    }catch (AlreadyExistsException e){
+        e.printStackTrace();
+    }
+```
+### Step 3: Subscribe and attach a message recipient to a class
+```java
+     public SubscriberA() {
+        try {
+            JPost.getBroadcastCenter().addSubscriber(ChannelIds.publicChannel1, this);
+            
+            // TO ADD SUBSCRIBER ASYNCHRONOUSLY 
+            // JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);
+        }catch (PermissionException e){
+            e.printStackTrace();
+        }catch (NoSuchChannelException e){
+            e.printStackTrace();
+        }catch (AlreadyExistsException e){
+            e.printStackTrace();
+        }catch (IllegalChannelStateException e){
+            e.printStackTrace();
+        }catch (NullObjectException e){
+            e.printStackTrace();
+        }
+    }
+    
+    @OnMessage(channelId = ChannelIds.publicChannel1)
+    private void onMessage1(Message1 msg){
+        System.out.println("SubscriberA: " + msg.getMsg());
+    }
+```
+
+### Step 4: Send Message via public channel
+```java
+    //TO SEND THROUGH THE CLASS RUNNING THREAD USER
+    JPost.getBroadcastCenter().broadcast(ChannelIds.publicChannel1, new Message1("Application sending public message"));
+  
+    // TO SEND ASYNCHRONOUSLY
+    try {
+        JPost.getBroadcastCenter().broadcastAsync(ChannelIds.publicChannel1, new Message1("Application sending public async message"));
+    }catch (JPostNotRunningException e){
+        e.printStackTrace();
+    }
+```
+
+## Example 3: Creating private channel, adding subscribers(Only creator/owner of the channel has adding subscribers right) and sending and receiving messages over it
+```java
+    public class ChannelIds {
+        public static final int publicChannel1 = 1;
+        public static final int privateChannel1 = 2;
+    }
+    
+    // CREATING PRIVATE CHANNEL
+    try {
+        JPost.getBroadcastCenter().createPrivateChannel(this, ChannelIds.privateChannel1);
+    }catch (AlreadyExistsException e){
+        e.printStackTrace();
+    }
+    
+    // ADDING 
+    try {
+        JPost.getBroadcastCenter().addSubscriber(this, ChannelIds.privateChannel1, subscriberA);
+    }catch (AlreadyExistsException e){
+        e.printStackTrace();
+    }catch (NullObjectException e){
+        e.printStackTrace();
+    }catch (NoSuchChannelException e){
+        e.printStackTrace();
+    }catch (PermissionException e){
+        e.printStackTrace();
+    }catch (IllegalChannelStateException e){
+        e.printStackTrace();
+    }
+    
+    // SUBSCRIBING PRIVATE MESSAGES
+    @OnMessage(channelId = ChannelIds.privateChannel1)
+    private void onMessage1(Message1 msg){
+        System.out.println("SubscriberD: " + msg.getMsg());
+    }
+    
+```
+
+# Interesting Usage
+### 1. The subscribers are added with unique ids. If id is not provided then its hashcode is taken as the id.
+```java
+    int subscriberId = 1;
+    try {
+        JPost.getBroadcastCenter().addSubscriber(ChannelIds.publicChannel1, this, subscriberId);
+    }catch (PermissionException e){
+        e.printStackTrace();
+    }catch (NoSuchChannelException e){
+        e.printStackTrace();
+    }catch (AlreadyExistsException e){
+        e.printStackTrace();
+    }catch (IllegalChannelStateException e){
+        e.printStackTrace();
+    }catch (NullObjectException e){
+        e.printStackTrace();
+    }
+```
+### 2. The message can also be send to select subscribers on the channel
+```java
+    int subscriberId1 = 1;
+    int subscriberId2 = 2;
+    try {
+        JPost.getBroadcastCenter().broadcastAsync(ChannelIds.publicChannel1, 
+                new Message1("Application sending public message"), subscriberId1, subscriberId2);
+    }catch (JPostNotRunningException e){
+        e.printStackTrace();
+    }
+```
+
+# Android Note:
+### If the UI has to be updated with the message then attach a runnable
+```java
+  @OnMessage
+    private void onMessage(final Message msg){
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                textView.setText(msg.getMsg());
+            }
+        });
+    }
+```
+
+# License
 
 ```
    Copyright (C) 2016 Janishar Ali Anwar
