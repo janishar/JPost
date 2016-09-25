@@ -35,7 +35,7 @@ The design of this library is such that the modularity of the code is enhanced a
 # Gradle
 ```java
 dependencies {
-    compile 'com.mindorks:jpost:1.0.0-snapshot'
+    compile 'com.mindorks:jpost:0.0.1'
 }
 ```
 
