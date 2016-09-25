@@ -45,34 +45,30 @@ publishing {
 try {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
-} catch (all) {}
 
-bintray {
-    user = properties.getProperty('bintray.user')
-    key = properties.getProperty('bintray.apikey')
-    publications = ['MyPublication']
+    bintray {
+        user = properties.getProperty('bintray.user')
+        key = properties.getProperty('bintray.apikey')
+        publications = ['MyPublication']
 
-    pkg {
-        repo = 'mindorks'
-        name = 'jpost'
+        pkg {
+            repo = 'mindorks'
+            name = 'jpost'
 
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/janishar/JPost.git'
-        labels = ['java', 'communication', 'class', "modular code","pub-sub"]
-        publicDownloadNumbers = true
-        version {
-            name = ver
-            desc = 'java class communication library'
-            released  = new Date()
-            vcsTag = ver
-            attributes = ['java': '1.7']
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/janishar/JPost.git'
+            labels = ['java', 'communication', 'class', "modular code","pub-sub"]
+            publicDownloadNumbers = true
+            version {
+                name = ver
+                desc = 'java class communication library'
+                released  = new Date()
+                vcsTag = ver
+                attributes = ['java': '1.7']
+            }
         }
     }
-//    filesSpec {
-//        from 'build/libs'
-//        into 'com/mindorks/jpost' + ver;
-//    }
-}
+} catch (all) {}
 
 repositories {
     jcenter()
