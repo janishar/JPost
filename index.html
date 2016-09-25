@@ -82,7 +82,15 @@
 <h1>
 <a id="gradle" class="anchor" href="#gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle</h1>
 
-<div class="highlight highlight-source-java"><pre>dependencies {
+<div class="highlight highlight-source-java"><pre>
+
+repositories {
+    maven {
+        url <span class="pl-s"><span class="pl-pds">'</span>https://dl.bintray.com/janishar/mindorks/<span class="pl-pds">'</span></span>
+    }
+}
+
+dependencies {
     compile <span class="pl-s"><span class="pl-pds">'</span>com.mindorks:jpost:0.0.1<span class="pl-pds">'</span></span>
 }</pre></div>
 
