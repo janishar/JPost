@@ -1,6 +1,7 @@
 package com.mindorks.jpost;
 
 import com.mindorks.jpost.annotations.OnMessage;
+import com.mindorks.jpost.annotations.RunOnAndroidUiThread;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
@@ -79,6 +80,13 @@ public class PublicChannel extends DefaultChannel
                                                         }
                                                     }
                                                     if (methodFound) {
+                                                        Annotation androidAnnotation = method.getAnnotation(RunOnAndroidUiThread.class);
+                                                        if(androidAnnotation != null){
+                                                            RunOnAndroidUiThread onUiThread = (RunOnAndroidUiThread) androidAnnotation;
+                                                            if(onUiThread.value() && Utils.runOnUiThreadAndroid(method, subscriberObj, mspPost)){
+                                                                return;
+                                                            }
+                                                        }
                                                         method.setAccessible(true);
                                                         method.invoke(subscriberObj, mspPost.getMessage());
                                                     }

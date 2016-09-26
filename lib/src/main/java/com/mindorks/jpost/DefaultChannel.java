@@ -1,5 +1,6 @@
 package com.mindorks.jpost;
 
+import com.mindorks.jpost.annotations.RunOnAndroidUiThread;
 import com.mindorks.jpost.annotations.OnMessage;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
@@ -76,6 +77,13 @@ public class DefaultChannel extends AbstractChannel<PriorityBlockingQueue<WeakRe
                                                 }
                                             }
                                             if (methodFound) {
+                                                Annotation androidAnnotation = method.getAnnotation(RunOnAndroidUiThread.class);
+                                                if(androidAnnotation != null){
+                                                    RunOnAndroidUiThread onUiThread = (RunOnAndroidUiThread) androidAnnotation;
+                                                    if(onUiThread.value() && Utils.runOnUiThreadAndroid(method, subscriberObj, mspPost)){
+                                                        return;
+                                                    }
+                                                }
                                                 method.setAccessible(true);
                                                 method.invoke(subscriberObj, mspPost.getMessage());
                                             }
