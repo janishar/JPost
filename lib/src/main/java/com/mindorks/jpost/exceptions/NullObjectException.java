@@ -10,6 +10,6 @@ public class NullObjectException extends Exception{
     }
 
     public String toString() {
-        return "InvalidPropertyException[" + super.getMessage() + "]";
+        return "NullObjectException[" + super.getMessage() + "]";
     }
 }
