@@ -50,11 +50,10 @@ try {
         user = properties.getProperty('bintray.user')
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
-
+        dryRun = true;
         pkg {
             repo = 'mindorks'
             name = 'jpost'
-
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/janishar/JPost.git'
             labels = ['java', 'communication', 'class', "modular code","pub-sub"]
