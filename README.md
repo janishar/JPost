@@ -34,7 +34,7 @@ The design of this library is such that the modularity of the code is enhanced a
 ## If this library helps you in anyway, show your love :heart: by putting a :star: on this project :v:
 
 # Gradle
-```java
+```groovy
 dependencies {
     compile 'com.mindorks:jpost:0.0.1'
 }
@@ -286,6 +286,15 @@ dependencies {
             }
         });
     }
+```
+
+# Proguard Note:
+### If you are using proguard, then add this rule in proguard-project.txt
+```groovy
+  -keepattributes *Annotation*
+  -keepclassmembers class ** {
+    @com.mindorks.jpost.annotations.OnMessage <methods>;
+  }
 ```
 
 # License
