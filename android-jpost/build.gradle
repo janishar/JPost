@@ -89,10 +89,8 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    try {
-        compileOnly 'com.google.android:android:4.1.1.4'
-        compileOnly 'com.google.android:support-v4:r7'
-    }catch (all){}
+    compile 'com.google.android:android:4.1.1.4'
+    compile 'com.google.android:support-v4:r7'
 }
 
 //UPLOAD PROCEDURE
