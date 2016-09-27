@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2016 Janishar Ali Anwar
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+plugins {
+    id "com.jfrog.bintray" version "1.7"
+}
+
+def ver = '0.0.1'
+group 'com.mindorks'
+version ver
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = '1.7'
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'com.mindorks'
+            artifactId 'com.mindorks.jpost'
+            version ver
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+if(project.rootProject.file("local.properties").exists()){
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+    bintray {
+        user = properties.getProperty('bintray.user')
+        key = properties.getProperty('bintray.apikey')
+        publications = ['MyPublication']
+        dryRun = true;
+        pkg {
+            repo = 'mindorks'
+            name = 'com.mindorks.jpost'
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/janishar/JPost.git'
+            labels = ['java', 'communication', 'class', "modular code","pub-sub"]
+            publicDownloadNumbers = true
+            version {
+                name = ver
+                desc = 'java class communication library'
+                released  = new Date()
+                vcsTag = ver
+                attributes = ['java': '1.7']
+            }
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+//UPLOAD PROCEDURE
+//cd to the library folder having build.gradle
+//ex. cd /Users/janisharali/Mindorks/library/jPost/lib
+//gradle bintrayUpload

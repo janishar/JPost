@@ -1,7 +1,7 @@
 package tes.mindorks.jpost;
 
 
-import com.mindorks.jpost.JPost;
+import com.mindorks.jpost.center.JPost;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.JPostNotRunningException;
 import com.mindorks.jpost.exceptions.NoSuchChannelException;
