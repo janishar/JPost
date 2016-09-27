@@ -48,7 +48,7 @@ publishing {
         MyPublication(MavenPublication) {
             from components.java
             groupId 'com.mindorks'
-            artifactId 'com.mindorks.android-jpost'
+            artifactId 'android-jpost'
             version ver
             artifact sourcesJar
             artifact javadocJar
@@ -67,7 +67,7 @@ if(project.rootProject.file("local.properties").exists()){
         dryRun = false;
         pkg {
             repo = 'mindorks'
-            name = 'com.mindorks.android-jpost'
+            name = 'android-jpost'
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/janishar/JPost.git'
             labels = ['android','event','java', 'communication', 'class', "modular code","pub-sub"]
