@@ -1,9 +1,8 @@
 language: java
 
 script: 
-    ./gradlew check
-    ./gradlew assemble
-    
+    gradle check
+
 jdk:
   - oraclejdk8
   - oraclejdk7

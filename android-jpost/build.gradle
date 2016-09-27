@@ -64,13 +64,13 @@ if(project.rootProject.file("local.properties").exists()){
         user = properties.getProperty('bintray.user')
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
-        dryRun = true;
+        dryRun = false;
         pkg {
             repo = 'mindorks'
             name = 'com.mindorks.android-jpost'
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/janishar/JPost.git'
-            labels = ['java', 'communication', 'class', "modular code","pub-sub"]
+            labels = ['android','event','java', 'communication', 'class', "modular code","pub-sub"]
             publicDownloadNumbers = true
             version {
                 name = ver
