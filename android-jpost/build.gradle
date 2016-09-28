@@ -64,7 +64,7 @@ if(project.rootProject.file("local.properties").exists()){
         user = properties.getProperty('bintray.user')
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
-        dryRun = false;
+        dryRun = true;
         pkg {
             repo = 'mindorks'
             name = 'android-jpost'
@@ -89,8 +89,13 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile 'com.google.android:android:4.1.1.4'
-    compile 'com.google.android:support-v4:r7'
+//    compile 'com.google.android:android:4.1.1.4'
+//    compile 'com.google.android:support-v4:r7'
+
+    compileOnly 'com.google.android:android:4.1.1.4'
+    compileOnly 'com.google.android:support-v4:r7'
+
+    compile project(':jpost')
 }
 
 //UPLOAD PROCEDURE

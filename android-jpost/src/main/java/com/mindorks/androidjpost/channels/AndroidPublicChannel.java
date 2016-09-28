@@ -16,13 +16,17 @@
 
 package com.mindorks.androidjpost.channels;
 
-import com.mindorks.jpost.annotations.OnMessage;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.mindorks.androidjpost.OnUiThread;
+import com.mindorks.jpost.PublicChannel;
+import com.mindorks.jpost.core.OnMessage;
 import com.mindorks.jpost.core.*;
-import com.mindorks.jpost.exceptions.IllegalChannelStateException;
-import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -30,70 +34,59 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public class AndroidPublicChannel extends AndroidDefaultChannel
-        implements CustomChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-        ConcurrentHashMap<Integer,WeakReference<Object>>>{
+public class AndroidPublicChannel<Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+        M extends ConcurrentHashMap<Integer,WeakReference<Object>>>
+        extends PublicChannel<Q,M> implements CustomChannel<Q,M>{
 
-    public AndroidPublicChannel(Integer channelId, ChannelType type, ChannelState state) {
-        super(channelId, type, state);
+    public AndroidPublicChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue, M subscriberMap) {
+        super(channelId, state, type, postQueue, subscriberMap);
     }
 
     @Override
-    public void terminateChannel() {
-        super.setChannelState(ChannelState.TERMINATED);
-        super.getSubscriberMap().clear();
-        super.getPostQueue().clear();
-    }
-
-    @Override
-    public void startChannel() {
-        super.setChannelState(ChannelState.OPEN);
-    }
-
-    @Override
-    public void stopChannel() {
-        super.setChannelState(ChannelState.STOPPED);
-    }
-
-    @Override
-    public <T> void broadcast(T msg, Integer... subscriberIds) throws NullObjectException, IllegalChannelStateException {
-        if(super.getChannelState() != ChannelState.OPEN){
-            throw new IllegalChannelStateException("Channel with id " + super.getChannelId() + " is closed");
-        }
-        if(msg == null){
-            throw new NullObjectException("message is null");
-        }
-        ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
-        getPostQueue().put(new WeakReference<ChannelPost>(post));
-
-        while (!getPostQueue().isEmpty()) {
+    public <T, P extends Post<?, ?>> boolean deliverMessage(T subscriber, OnMessage msgAnnotation, Method method, P post) {
+        int channelId = msgAnnotation.channelId();
+        boolean isCommonReceiver = msgAnnotation.isCommonReceiver();
+        if (isCommonReceiver || getChannelId().equals(channelId)) {
             try {
-                WeakReference<ChannelPost> msgRef = getPostQueue().take();
-                ChannelPost mspPost = msgRef.get();
-                if (mspPost != null && mspPost.getChannelId() != null) {
-                    if(mspPost.getChannelId().equals(getChannelId())) {
-                        for (Integer subscriberId : subscriberIds) {
-                            if(getSubscriberMap().containsKey(subscriberId)) {
-                                WeakReference<Object> subscriberRef = getSubscriberMap().get(subscriberId);
-                                Object subscriberObj = subscriberRef.get();
-                                if (subscriberObj != null) {
-                                    for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
-                                        Annotation annotation = method.getAnnotation(OnMessage.class);
-                                        if (annotation != null) {
-                                            deliverMessage(subscriberObj, (OnMessage) annotation, method, mspPost);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }else{
-                        getPostQueue().put(msgRef);
+                boolean methodFound = false;
+                for (final Class paramClass : method.getParameterTypes()) {
+                    if (paramClass.equals(post.getMessage().getClass())) {
+                        methodFound = true;
+                        break;
                     }
                 }
-            } catch (InterruptedException e) {
+                if (methodFound) {
+                    Annotation annotation = method.getAnnotation(OnUiThread.class);
+                    if (annotation != null) {
+                        runOnUiThread(subscriber, method, post);
+                    }else{
+                        method.setAccessible(true);
+                        method.invoke(subscriber, post.getMessage());
+                    }
+                }
+                return true;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 
+    protected <T>void runOnUiThread(final T subscriber,final Method method,final Post post){
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    method.setAccessible(true);
+                    method.invoke(subscriber, post.getMessage());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

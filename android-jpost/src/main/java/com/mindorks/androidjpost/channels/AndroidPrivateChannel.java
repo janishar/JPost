@@ -16,37 +16,82 @@
 
 package com.mindorks.androidjpost.channels;
 
+import android.os.Handler;
+import android.os.Looper;
+
+import com.mindorks.androidjpost.OnUiThread;
+import com.mindorks.jpost.PrivateChannel;
+import com.mindorks.jpost.core.OnMessage;
+import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.core.ChannelState;
 import com.mindorks.jpost.core.ChannelType;
-import com.mindorks.jpost.exceptions.InvalidPropertyException;
-import com.mindorks.jpost.exceptions.NullObjectException;
+import com.mindorks.jpost.core.Post;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Created by janisharali on 22/09/16.
  */
-public class AndroidPrivateChannel extends AndroidPublicChannel{
+public class AndroidPrivateChannel<
+        Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+        M extends ConcurrentHashMap<Integer,WeakReference<Object>>>
+        extends PrivateChannel<Q,M> {
 
-    private WeakReference<Object> channelOwnerRef;
-
-    public AndroidPrivateChannel(Integer channelId, ChannelType type, ChannelState state, WeakReference<Object> channelOwnerRef) {
-        super(channelId, type, state);
-        this.channelOwnerRef = channelOwnerRef;
+    public AndroidPrivateChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue,
+                                 M subscriberMap, WeakReference<Object> channelOwnerRef) {
+        super(channelId, state, type, postQueue, subscriberMap, channelOwnerRef);
     }
 
-    public WeakReference<Object> getChannelOwnerRef() {
-        return channelOwnerRef;
+    @Override
+    public <T, P extends Post<?, ?>> boolean deliverMessage(T subscriber, OnMessage msgAnnotation, Method method, P post) {
+        int channelId = msgAnnotation.channelId();
+        boolean isCommonReceiver = msgAnnotation.isCommonReceiver();
+        if (isCommonReceiver || getChannelId().equals(channelId)) {
+            try {
+                boolean methodFound = false;
+                for (final Class paramClass : method.getParameterTypes()) {
+                    if (paramClass.equals(post.getMessage().getClass())) {
+                        methodFound = true;
+                        break;
+                    }
+                }
+                if (methodFound) {
+                    Annotation annotation = method.getAnnotation(OnUiThread.class);
+                    if (annotation != null) {
+                        runOnUiThread(subscriber, method, post);
+                    }else{
+                        method.setAccessible(true);
+                        method.invoke(subscriber, post.getMessage());
+                    }
+                }
+                return true;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
-    public synchronized void removeSubscriber(Integer subscriberId) throws NullObjectException,InvalidPropertyException {
-        if(subscriberId == null){
-            throw new NullObjectException("subscriberId is null");
-        }
-        if(getSubscriberMap().containsKey(subscriberId)){
-            getSubscriberMap().remove(subscriberId);
-        }else{
-            throw new InvalidPropertyException("Subscriber with subscriberId " + subscriberId + " do not exists");
-        }
+    protected <T>void runOnUiThread(final T subscriber,final Method method,final Post post){
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    method.setAccessible(true);
+                    method.invoke(subscriber, post.getMessage());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

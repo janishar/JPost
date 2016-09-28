@@ -14,35 +14,36 @@
  * limitations under the License
  */
 
-package com.mindorks.androidjpost.center;
+package com.mindorks.jpost.core;
 
-
-import com.mindorks.androidjpost.channels.AndroidPrivateChannel;
-import com.mindorks.androidjpost.channels.AndroidPublicChannel;
-import com.mindorks.jpost.core.Broadcast;
-import com.mindorks.jpost.core.*;
+import com.mindorks.jpost.PrivateChannel;
+import com.mindorks.jpost.PublicChannel;
 import com.mindorks.jpost.exceptions.*;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.mindorks.androidjpost.center.JPost.channelMap;
-import static com.mindorks.androidjpost.center.JPost.executorService;
 
 
 /**
  * Created by janisharali on 22/09/16.
  */
-public abstract class AbstractAndroidBroadcastCenter
+public abstract class AbstractBroadcastCenter
         implements Broadcast<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-        ConcurrentHashMap<Integer,WeakReference<Object>>>> {
+        ConcurrentHashMap<Integer,WeakReference<Object>>>>{
 
     private ReentrantLock channelStateChangerLock;
+    private ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap;
+    private ExecutorService executorService;
 
-    public AbstractAndroidBroadcastCenter() {
+    public AbstractBroadcastCenter(ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap, ExecutorService executorService) {
+        this.channelMap = channelMap;
+        this.executorService = executorService;
         channelStateChangerLock = new ReentrantLock();
     }
 
@@ -62,8 +63,8 @@ public abstract class AbstractAndroidBroadcastCenter
     }
 
     @Override
-    public Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>, ConcurrentHashMap<Integer,
-                WeakReference<Object>>> getChannel(Integer channelId)
+    public Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer,WeakReference<Object>>> getChannel(Integer channelId)
             throws NoSuchChannelException, NullObjectException {
         if(channelId == null){
             throw new NullObjectException("channelId is null");
@@ -161,10 +162,11 @@ public abstract class AbstractAndroidBroadcastCenter
             throws InvalidPropertyException, NoSuchChannelException, PermissionException, NullObjectException{
 
         Channel channel = getChannel(channelId);
-        if(channel instanceof AndroidPrivateChannel){
-            AndroidPrivateChannel privateChannel = (AndroidPrivateChannel)channel;
+        if(channel instanceof PrivateChannel){
+            PrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                    ConcurrentHashMap<Integer,WeakReference<Object>>> privateChannel = (PrivateChannel)channel;
             boolean isPermissionGranted = false;
-            for(WeakReference weakReference : privateChannel.getSubscriberMap().values()){
+            for(WeakReference<Object> weakReference : privateChannel.getSubscriberMap().values()){
                 Object subscriber = weakReference.get();
                 if(subscriber != null && subscriber == registeredSubscriber){
                     isPermissionGranted = true;
@@ -429,8 +431,8 @@ public abstract class AbstractAndroidBroadcastCenter
 
         Channel channel = getChannel(channelId);
         if(channel.getChannelState() == ChannelState.OPEN){
-            if(channel instanceof AndroidPublicChannel && subscribers.length > 0){
-                ((AndroidPublicChannel)channel).broadcast(msg, subscribers);
+            if(channel instanceof PublicChannel && subscribers.length > 0){
+                ((PublicChannel)channel).broadcast(msg, subscribers);
             }else {
                 channel.broadcast(msg);
             }
@@ -444,8 +446,9 @@ public abstract class AbstractAndroidBroadcastCenter
 
         Channel channel = getChannel(channelId);
         if(channel.getChannelState() == ChannelState.OPEN){
-            if(channel instanceof AndroidPrivateChannel){
-                AndroidPrivateChannel privateChannel = (AndroidPrivateChannel)channel;
+            if(channel instanceof PrivateChannel){
+                PrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                        ConcurrentHashMap<Integer,WeakReference<Object>>> privateChannel = (PrivateChannel)channel;
                 boolean isPermissionGranted = false;
                 for(WeakReference weakReference : privateChannel.getSubscriberMap().values()){
                     Object subscriber = weakReference.get();
@@ -475,7 +478,7 @@ public abstract class AbstractAndroidBroadcastCenter
             throws NoSuchChannelException, AlreadyExistsException, PermissionException, IllegalChannelStateException, NullObjectException{
 
         Channel channel = getChannel(channelId);
-        if(channel instanceof AndroidPrivateChannel){
+        if(channel instanceof PrivateChannel){
             throw new PermissionException("Only owner of the private channel can add a subscriber to private channel");
         }
         if(channel.getChannelState() == ChannelState.OPEN){
@@ -490,8 +493,8 @@ public abstract class AbstractAndroidBroadcastCenter
 
         Channel channel = getChannel(channelId);
         if(channel.getChannelState() == ChannelState.OPEN){
-            if(channel instanceof AndroidPrivateChannel){
-                AndroidPrivateChannel privateChannel = (AndroidPrivateChannel)channel;
+            if(channel instanceof PrivateChannel){
+                PrivateChannel privateChannel = (PrivateChannel)channel;
                 if(privateChannel.getChannelOwnerRef() != null
                         && privateChannel.getChannelOwnerRef().get() != null){
                     if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
@@ -506,5 +509,14 @@ public abstract class AbstractAndroidBroadcastCenter
         }else{
             throw new IllegalChannelStateException("Channel with channelId " + channelId + " has been " + channel.getChannelState().name());
         }
+    }
+
+    public ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer, WeakReference<Object>>>> getChannelMap() {
+        return channelMap;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }

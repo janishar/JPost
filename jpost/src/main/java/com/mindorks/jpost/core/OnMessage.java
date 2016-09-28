@@ -14,18 +14,21 @@
  * limitations under the License
  */
 
-package com.mindorks.jpost.exceptions;
+package com.mindorks.jpost.core;
+
+import com.mindorks.jpost.core.Channel;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created by janisharali on 22/09/16.
+ * Created by janisharali on 23/09/16.
  */
-public class PermissionException extends Exception{
-
-    public PermissionException(String message) {
-        super(message);
-    }
-
-    public String toString() {
-        return "PermissionException[" + super.getMessage() + "]";
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface OnMessage {
+    int channelId() default Channel.DEFAULT_CHANNEL_ID;
+    boolean isCommonReceiver() default false;
 }

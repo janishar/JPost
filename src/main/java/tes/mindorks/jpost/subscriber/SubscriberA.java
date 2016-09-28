@@ -1,7 +1,9 @@
 package tes.mindorks.jpost.subscriber;
 
-import com.mindorks.jpost.annotations.OnMessage;
-import com.mindorks.jpost.center.JPost;
+
+import com.mindorks.androidjpost.JPost;
+import com.mindorks.jpost.core.OnMessage;
+
 import tes.mindorks.jpost.ChannelIds;
 import tes.mindorks.jpost.message.Message1;
 import tes.mindorks.jpost.message.Message2;

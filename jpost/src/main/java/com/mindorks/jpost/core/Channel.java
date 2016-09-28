@@ -20,6 +20,7 @@ import com.mindorks.jpost.exceptions.*;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -100,6 +101,7 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
      */
     <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidPropertyException;
 
+    <T, P extends Post<?, ?>>boolean deliverMessage(T subscriber, OnMessage msgAnnotation, Method method, P post);
 
     /**
      *

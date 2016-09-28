@@ -20,28 +20,35 @@ package com.mindorks.androidjpost.channels;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.mindorks.androidjpost.annotations.OnUiThread;
-import com.mindorks.jpost.annotations.OnMessage;
+import com.mindorks.androidjpost.OnUiThread;
+import com.mindorks.jpost.core.OnMessage;
+import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.core.ChannelState;
 import com.mindorks.jpost.core.ChannelType;
 import com.mindorks.jpost.core.DefaultChannel;
 import com.mindorks.jpost.core.Post;
 
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Created by janisharali on 27/09/16.
  */
-public class AndroidDefaultChannel extends DefaultChannel {
+public class AndroidDefaultChannel<
+        Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+        M extends ConcurrentHashMap<Integer,WeakReference<Object>>>
+        extends DefaultChannel<Q,M> {
 
-    public AndroidDefaultChannel(Integer channelId, ChannelType type, ChannelState state) {
-        super(channelId, type, state);
+    public AndroidDefaultChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue, M subscriberMap) {
+        super(channelId, state, type, postQueue, subscriberMap);
     }
 
     @Override
-    protected <T>boolean deliverMessage(T subscriber, OnMessage msgAnnotation, Method method, Post post){
+    public <T, P extends Post<?, ?>> boolean deliverMessage(T subscriber, OnMessage msgAnnotation, Method method, P post) {
         int channelId = msgAnnotation.channelId();
         boolean isCommonReceiver = msgAnnotation.isCommonReceiver();
         if (isCommonReceiver || getChannelId().equals(channelId)) {

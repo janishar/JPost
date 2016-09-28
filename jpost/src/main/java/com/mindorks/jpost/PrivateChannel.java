@@ -14,23 +14,28 @@
  * limitations under the License
  */
 
-package com.mindorks.jpost.channels;
+package com.mindorks.jpost;
 
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.InvalidPropertyException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Created by janisharali on 22/09/16.
  */
-public class PrivateChannel extends PublicChannel{
+public class PrivateChannel<
+        Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+        M extends ConcurrentHashMap<Integer,WeakReference<Object>>>
+        extends PublicChannel<Q,M>{
 
     private WeakReference<Object> channelOwnerRef;
 
-    public PrivateChannel(Integer channelId, ChannelType type, ChannelState state, WeakReference<Object> channelOwnerRef) {
-        super(channelId, type, state);
+    public PrivateChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue, M subscriberMap, WeakReference<Object> channelOwnerRef) {
+        super(channelId, state, type, postQueue, subscriberMap);
         this.channelOwnerRef = channelOwnerRef;
     }
 

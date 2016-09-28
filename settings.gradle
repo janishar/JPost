@@ -1,4 +1,2 @@
 rootProject.name = 'JPost'
-include ':jpost'
-include 'android-jpost'
-
+include ':jpost', ':android-jpost'

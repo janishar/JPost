@@ -14,9 +14,9 @@
  * limitations under the License
  */
 
-package com.mindorks.jpost.channels;
+package com.mindorks.jpost;
 
-import com.mindorks.jpost.annotations.OnMessage;
+import com.mindorks.jpost.core.OnMessage;
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
@@ -31,12 +31,14 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public class PublicChannel extends DefaultChannel
-        implements CustomChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-        ConcurrentHashMap<Integer,WeakReference<Object>>>{
+public class PublicChannel<
+        Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+        M extends ConcurrentHashMap<Integer,WeakReference<Object>>>
+        extends DefaultChannel<Q,M>
+        implements CustomChannel<Q,M>{
 
-    public PublicChannel(Integer channelId, ChannelType type, ChannelState state) {
-        super(channelId, type, state);
+    public PublicChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue, M subscriberMap) {
+        super(channelId, state, type, postQueue, subscriberMap);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class PublicChannel extends DefaultChannel
             throw new NullObjectException("message is null");
         }
         ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
-        getPostQueue().put(new WeakReference<ChannelPost>(post));
+        getPostQueue().put(new WeakReference<>(post));
 
         while (!getPostQueue().isEmpty()) {
             try {

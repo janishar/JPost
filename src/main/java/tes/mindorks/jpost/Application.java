@@ -1,17 +1,14 @@
 package tes.mindorks.jpost;
 
 
-import com.mindorks.jpost.center.JPost;
+import com.mindorks.androidjpost.JPost;
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.JPostNotRunningException;
 import com.mindorks.jpost.exceptions.NoSuchChannelException;
 import tes.mindorks.jpost.message.Message1;
 import tes.mindorks.jpost.message.Message2;
-import tes.mindorks.jpost.message.Message3;
 import tes.mindorks.jpost.message.Message4;
-import tes.mindorks.jpost.subscriber.SubscriberA;
 import tes.mindorks.jpost.subscriber.SubscriberB;
-import tes.mindorks.jpost.subscriber.SubscriberC;
 import tes.mindorks.jpost.subscriber.SubscriberD;
 
 import java.lang.ref.WeakReference;
@@ -57,7 +54,6 @@ public class Application {
         }catch (NoSuchChannelException e){
             e.printStackTrace();
         }
-
         JPost.shutdown();
     }
 }
