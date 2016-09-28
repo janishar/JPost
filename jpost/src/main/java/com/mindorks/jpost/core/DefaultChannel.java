@@ -121,7 +121,7 @@ public class DefaultChannel<
         if(super.getSubscriberMap().containsKey(subscriberId)){
             throw new AlreadyExistsException("subscriber with subscriberId " + subscriberId + " already registered");
         }
-        super.getSubscriberMap().put(subscriberId, new WeakReference<>(subscriber));
+        super.getSubscriberMap().put(subscriberId, new WeakReference<Object>(subscriber));
         return subscriber;
     }
 

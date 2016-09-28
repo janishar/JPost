@@ -66,7 +66,7 @@ public class PublicChannel<
         if(msg == null){
             throw new NullObjectException("message is null");
         }
-        ChannelPost<T, Object> post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
+        ChannelPost post = new ChannelPost<>(msg, getChannelId(), Post.PRIORITY_MEDIUM);
         getPostQueue().put(new WeakReference<>(post));
 
         while (!getPostQueue().isEmpty()) {
