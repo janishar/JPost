@@ -106,17 +106,19 @@ if(project.rootProject.file("local.properties").exists()){
 }
 
 repositories {
-    bintray.jcenter()
+    jcenter()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'com.google.android:android:4.1.1.4'
     compile 'com.google.android:support-v4:r7'
+    compile project(':jpost')
 
 //    compileOnly 'com.google.android:android:4.1.1.4'
 //    compileOnly 'com.google.android:support-v4:r7'
-    compile 'com.mindorks:jpost:0.0.2-dev'
+//    compile 'com.mindorks:jpost:0.0.2-dev'
+
 }
 
 //UPLOAD PROCEDURE

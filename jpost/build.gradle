@@ -106,7 +106,7 @@ if(project.rootProject.file("local.properties").exists()){
 }
 
 repositories {
-    bintray.jcenter()
+    jcenter()
 }
 
 dependencies {

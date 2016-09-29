@@ -106,12 +106,13 @@ if(project.rootProject.file("local.properties").exists()){
 }
 
 repositories {
-    bintray.jcenter()
+    jcenter()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile 'com.mindorks:jpost:0.0.2-dev'
+//    compile 'com.mindorks:jpost:0.0.2-dev'
+    compile project(':jpost')
 }
 
 //UPLOAD PROCEDURE
