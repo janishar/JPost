@@ -18,7 +18,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.1-dev'
+def ver = '0.0.2-dev'
 group 'com.mindorks'
 version ver
 
@@ -116,8 +116,7 @@ dependencies {
 
 //    compileOnly 'com.google.android:android:4.1.1.4'
 //    compileOnly 'com.google.android:support-v4:r7'
-
-    compile project(':jpost')
+    compile 'com.mindorks:jpost:0.0.2-dev'
 }
 
 //UPLOAD PROCEDURE
