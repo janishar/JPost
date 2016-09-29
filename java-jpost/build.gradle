@@ -65,13 +65,13 @@ publishing {
         MyPublication(MavenPublication) {
             from components.java
             groupId 'com.mindorks'
-            artifactId 'android-jpost'
+            artifactId 'java-jpost'
             version ver
             artifact sourcesJar
             artifact javadocJar
             pom.withXml {
                 def root = asNode()
-                root.appendNode('description', 'android class communication library')
+                root.appendNode('description', 'java class communication library')
                 root.children().last() + pomConfig
             }
         }
@@ -89,10 +89,10 @@ if(project.rootProject.file("local.properties").exists()){
         dryRun = true;
         pkg {
             repo = 'mindorks'
-            name = 'android-jpost'
+            name = 'java-jpost'
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/janishar/JPost.git'
-            labels = ['android','event','java', 'communication', 'class', "modular code","pub-sub"]
+            labels = ['java', 'communication', 'class', "modular code","pub-sub"]
             publicDownloadNumbers = true
             version {
                 name = ver
@@ -111,12 +111,6 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile 'com.google.android:android:4.1.1.4'
-    compile 'com.google.android:support-v4:r7'
-
-//    compileOnly 'com.google.android:android:4.1.1.4'
-//    compileOnly 'com.google.android:support-v4:r7'
-
     compile project(':jpost')
 }
 

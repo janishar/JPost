@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.mindorks.androidjpost;
+package com.mindorks.androidjpost.droid;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

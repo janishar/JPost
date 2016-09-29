@@ -14,9 +14,15 @@
  * limitations under the License
  */
 
-package com.mindorks.jpost;
+package com.mindorks.javajpost;
 
-import com.mindorks.jpost.core.*;
+import com.mindorks.jpost.core.Broadcast;
+import com.mindorks.jpost.core.BroadcastCenter;
+import com.mindorks.jpost.core.Channel;
+import com.mindorks.jpost.core.ChannelPost;
+import com.mindorks.jpost.core.ChannelState;
+import com.mindorks.jpost.core.ChannelType;
+import com.mindorks.jpost.core.DefaultChannel;
 
 import java.lang.ref.WeakReference;
 import java.util.Comparator;
@@ -34,7 +40,7 @@ public class JPost {
     private static ReentrantLock JPostBootLock = new ReentrantLock();
 
     protected static ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-            ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap;
+                ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap;
 
     protected static Broadcast broadcastCenter;
     protected static DefaultChannel channel;

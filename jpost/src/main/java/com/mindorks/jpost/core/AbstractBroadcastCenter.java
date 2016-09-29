@@ -16,8 +16,6 @@
 
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.PrivateChannel;
-import com.mindorks.jpost.PublicChannel;
 import com.mindorks.jpost.exceptions.*;
 
 import java.lang.ref.WeakReference;

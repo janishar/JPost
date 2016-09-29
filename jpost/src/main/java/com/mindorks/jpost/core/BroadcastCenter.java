@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.mindorks.jpost;
+package com.mindorks.jpost.core;
 
 import com.mindorks.jpost.core.*;
 import com.mindorks.jpost.exceptions.*;

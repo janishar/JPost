@@ -16,9 +16,9 @@
 
 package com.mindorks.androidjpost;
 
-import com.mindorks.androidjpost.channels.AndroidPrivateChannel;
-import com.mindorks.androidjpost.channels.AndroidPublicChannel;
-import com.mindorks.jpost.BroadcastCenter;
+import com.mindorks.androidjpost.droid.AndroidPrivateChannel;
+import com.mindorks.androidjpost.droid.AndroidPublicChannel;
+import com.mindorks.jpost.core.BroadcastCenter;
 import com.mindorks.jpost.core.Channel;
 import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.core.ChannelState;

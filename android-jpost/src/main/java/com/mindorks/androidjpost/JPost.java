@@ -16,8 +16,7 @@
 
 package com.mindorks.androidjpost;
 
-import com.mindorks.androidjpost.channels.AndroidDefaultChannel;
-import com.mindorks.jpost.BroadcastCenter;
+import com.mindorks.androidjpost.droid.AndroidDefaultChannel;
 import com.mindorks.jpost.core.Broadcast;
 import com.mindorks.jpost.core.Channel;
 import com.mindorks.jpost.core.ChannelPost;
@@ -36,7 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by janisharali on 23/09/16.
  */
-public class JPost extends com.mindorks.jpost.JPost{
+public class JPost{
 
     private static ReentrantLock JPostBootLock = new ReentrantLock();
 

@@ -43,6 +43,23 @@ artifacts {
     archives sourcesJar, javadocJar
 }
 
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "https://github.com/janishar/JPost"
+        }
+    }
+    developers {
+        developer {
+            id "janishar.ali@gmail.com"
+            name "Janishar Ali"
+            email "janishar.ali@gmail.com"
+        }
+    }
+}
+
 publishing {
     publications {
         MyPublication(MavenPublication) {
@@ -52,6 +69,11 @@ publishing {
             version ver
             artifact sourcesJar
             artifact javadocJar
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'jpost core library modules')
+                root.children().last() + pomConfig
+            }
         }
     }
 }

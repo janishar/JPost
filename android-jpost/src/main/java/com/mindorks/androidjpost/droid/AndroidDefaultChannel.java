@@ -14,13 +14,12 @@
  * limitations under the License
  */
 
-package com.mindorks.androidjpost.channels;
+package com.mindorks.androidjpost.droid;
 
 
 import android.os.Handler;
 import android.os.Looper;
 
-import com.mindorks.androidjpost.OnUiThread;
 import com.mindorks.jpost.core.OnMessage;
 import com.mindorks.jpost.core.ChannelPost;
 import com.mindorks.jpost.core.ChannelState;

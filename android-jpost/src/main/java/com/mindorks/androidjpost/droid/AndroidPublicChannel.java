@@ -14,18 +14,14 @@
  * limitations under the License
  */
 
-package com.mindorks.androidjpost.channels;
+package com.mindorks.androidjpost.droid;
 
 import android.os.Handler;
 import android.os.Looper;
 
-import com.mindorks.androidjpost.OnUiThread;
-import com.mindorks.jpost.PrivateChannel;
+import com.mindorks.jpost.core.PublicChannel;
 import com.mindorks.jpost.core.OnMessage;
-import com.mindorks.jpost.core.ChannelPost;
-import com.mindorks.jpost.core.ChannelState;
-import com.mindorks.jpost.core.ChannelType;
-import com.mindorks.jpost.core.Post;
+import com.mindorks.jpost.core.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
@@ -37,14 +33,12 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Created by janisharali on 22/09/16.
  */
-public class AndroidPrivateChannel<
-        Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
+public class AndroidPublicChannel<Q extends PriorityBlockingQueue<WeakReference<ChannelPost>>,
         M extends ConcurrentHashMap<Integer,WeakReference<Object>>>
-        extends PrivateChannel<Q,M> {
+        extends PublicChannel<Q,M> implements CustomChannel<Q,M>{
 
-    public AndroidPrivateChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue,
-                                 M subscriberMap, WeakReference<Object> channelOwnerRef) {
-        super(channelId, state, type, postQueue, subscriberMap, channelOwnerRef);
+    public AndroidPublicChannel(Integer channelId, ChannelState state, ChannelType type, Q postQueue, M subscriberMap) {
+        super(channelId, state, type, postQueue, subscriberMap);
     }
 
     @Override
