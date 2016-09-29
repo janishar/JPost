@@ -450,9 +450,9 @@ public abstract class AbstractBroadcastCenter
         if(channel.getChannelState() == ChannelState.OPEN){
             if(channel instanceof PrivateChannel){
                 PrivateChannel privateChannel = (PrivateChannel)channel;
-                if(privateChannel.getChannelOwnerRef() != null
-                        && privateChannel.getChannelOwnerRef().get() != null){
-                    if(Utils.isEqual(privateChannel.getChannelOwnerRef().get(), owner)) {
+                if(privateChannel.getChannelOwnerRef() != null){
+                    Object channelOwner = privateChannel.getChannelOwnerRef().get();
+                    if(channelOwner != null && channelOwner.equals(owner)) {
                         privateChannel.addSubscriber(subscriber, subscriberId);
                     }else{
                         throw new PermissionException("Only the owner of the private channel is allowed to add subscribers to private channel");
