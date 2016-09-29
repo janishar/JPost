@@ -55,8 +55,10 @@ public class AndroidBroadcastCenter extends BroadcastCenter {
         }
 
         try {
-            AndroidPrivateChannel privateChannel =
-                    new AndroidPrivateChannel(
+            AndroidPrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>, ConcurrentHashMap<Integer,
+                    WeakReference<Object>>> privateChannel =
+                    new AndroidPrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                            ConcurrentHashMap<Integer,WeakReference<Object>>>(
                             channelId,
                             ChannelState.OPEN,
                             ChannelType.PRIVATE,
@@ -66,26 +68,22 @@ public class AndroidBroadcastCenter extends BroadcastCenter {
                                         public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
                                             ChannelPost post1 = o1.get();
                                             ChannelPost post2 = o2.get();
-                                            if(post1 != null || post2 != null){
+                                            if(post1 != null || post2 != null
+                                                    || post1.getPriority() != null
+                                                    || post2.getPriority() != null){
                                                 return post1.getPriority().compareTo(post2.getPriority());
                                             }else{
                                                 return 0;
                                             }
                                         }
                                     }),
-                            new ConcurrentHashMap<>(Channel.SUBSCRIBER_INITIAL_CAPACITY),
-                            new WeakReference<>(owner));
+                            new ConcurrentHashMap<Integer,WeakReference<Object>>(Channel.SUBSCRIBER_INITIAL_CAPACITY),
+                            new WeakReference<Object>(owner));
 
             getChannelMap().put(channelId, privateChannel);
             runPrivateSubscriptionTask(owner, channelId, owner, owner.hashCode());
             return privateChannel;
-        }catch (IllegalChannelStateException e){
-            e.printStackTrace();
-        }catch (PermissionException e){
-            e.printStackTrace();
-        }catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (NoSuchChannelException e){
+        }catch (IllegalChannelStateException | PermissionException| NullObjectException| NoSuchChannelException e){
             e.printStackTrace();
         }
         return null;
@@ -104,8 +102,10 @@ public class AndroidBroadcastCenter extends BroadcastCenter {
         }
 
         try {
-            AndroidPrivateChannel privateChannel =
-                    new AndroidPrivateChannel(
+            AndroidPrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>, ConcurrentHashMap<Integer,
+                    WeakReference<Object>>> privateChannel =
+                    new AndroidPrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                            ConcurrentHashMap<Integer,WeakReference<Object>>>(
                             channelId,
                             ChannelState.OPEN,
                             ChannelType.PRIVATE,
@@ -115,26 +115,22 @@ public class AndroidBroadcastCenter extends BroadcastCenter {
                                         public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
                                             ChannelPost post1 = o1.get();
                                             ChannelPost post2 = o2.get();
-                                            if(post1 != null || post2 != null){
+                                            if(post1 != null || post2 != null
+                                                    || post1.getPriority() != null
+                                                    || post2.getPriority() != null){
                                                 return post1.getPriority().compareTo(post2.getPriority());
                                             }else{
                                                 return 0;
                                             }
                                         }
                                     }),
-                            new ConcurrentHashMap<>(Channel.SUBSCRIBER_INITIAL_CAPACITY),
-                            new WeakReference<>(owner));
+                            new ConcurrentHashMap<Integer,WeakReference<Object>>(Channel.SUBSCRIBER_INITIAL_CAPACITY),
+                            new WeakReference<Object>(owner));
 
             getChannelMap().put(channelId, privateChannel);
             runPrivateSubscriptionTask(owner, channelId, owner, subscriberId);
             return privateChannel;
-        }catch (IllegalChannelStateException e){
-            e.printStackTrace();
-        }catch (PermissionException e){
-            e.printStackTrace();
-        }catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (NoSuchChannelException e){
+        }catch (IllegalChannelStateException | PermissionException | NullObjectException | NoSuchChannelException e){
             e.printStackTrace();
         }
         return null;
@@ -150,8 +146,10 @@ public class AndroidBroadcastCenter extends BroadcastCenter {
         if (getChannelMap().containsKey(channelId)) {
             throw new AlreadyExistsException("Channel with id " + channelId + " already exists");
         }
-        AndroidPublicChannel publicChannel =
-                new AndroidPublicChannel(
+        AndroidPublicChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>, ConcurrentHashMap<Integer,
+                WeakReference<Object>>> publicChannel =
+                new AndroidPublicChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                        ConcurrentHashMap<Integer,WeakReference<Object>>>(
                         channelId,
                         ChannelState.OPEN,
                         ChannelType.PUBLIC,
@@ -161,14 +159,16 @@ public class AndroidBroadcastCenter extends BroadcastCenter {
                                     public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
                                         ChannelPost post1 = o1.get();
                                         ChannelPost post2 = o2.get();
-                                        if(post1 != null || post2 != null){
+                                        if(post1 != null || post2 != null
+                                                || post1.getPriority() != null
+                                                || post2.getPriority() != null){
                                             return post1.getPriority().compareTo(post2.getPriority());
                                         }else{
                                             return 0;
                                         }
                                     }
                                 }),
-                        new ConcurrentHashMap<>(Channel.SUBSCRIBER_INITIAL_CAPACITY));
+                        new ConcurrentHashMap<Integer,WeakReference<Object>>(Channel.SUBSCRIBER_INITIAL_CAPACITY));
 
         getChannelMap().put(channelId, publicChannel);
         return publicChannel;

@@ -87,11 +87,7 @@ public abstract class AbstractBroadcastCenter
             throws AlreadyExistsException, NullObjectException{
         try {
             runSubscriptionTask(Channel.DEFAULT_CHANNEL_ID, subscriber, subscriber.hashCode());
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }catch (IllegalChannelStateException e){
-            e.printStackTrace();
-        }catch (PermissionException e){
+        }catch (NoSuchChannelException | IllegalChannelStateException | PermissionException e){
             e.printStackTrace();
         }
     }
@@ -141,7 +137,7 @@ public abstract class AbstractBroadcastCenter
 
     @Override
     public <T> void removeSubscriber(T subscriber)
-            throws InvalidPropertyException, NoSuchChannelException, NullObjectException{
+            throws InvalidSubscriberException, NoSuchChannelException, NullObjectException{
 
         Channel channel = getChannel(Channel.DEFAULT_CHANNEL_ID);
         channel.removeSubscriber(subscriber);
@@ -149,7 +145,7 @@ public abstract class AbstractBroadcastCenter
 
     @Override
     public <T> void removeSubscriber(Integer channelId, T subscriber)
-            throws InvalidPropertyException, NoSuchChannelException, NullObjectException{
+            throws InvalidSubscriberException, NoSuchChannelException, NullObjectException{
 
         Channel channel = getChannel(channelId);
         channel.removeSubscriber(subscriber);
@@ -157,18 +153,19 @@ public abstract class AbstractBroadcastCenter
 
     @Override
     public <T> void removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId)
-            throws InvalidPropertyException, NoSuchChannelException, PermissionException, NullObjectException{
+            throws InvalidSubscriberException, NoSuchChannelException, PermissionException, NullObjectException{
 
         Channel channel = getChannel(channelId);
         if(channel instanceof PrivateChannel){
-            PrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                    ConcurrentHashMap<Integer,WeakReference<Object>>> privateChannel = (PrivateChannel)channel;
+            PrivateChannel privateChannel = (PrivateChannel)channel;
             boolean isPermissionGranted = false;
-            for(WeakReference<Object> weakReference : privateChannel.getSubscriberMap().values()){
-                Object subscriber = weakReference.get();
-                if(subscriber != null && subscriber == registeredSubscriber){
-                    isPermissionGranted = true;
-                    break;
+            for(Object weakReferenceObj : privateChannel.getSubscriberMap().values()){
+                if(weakReferenceObj instanceof WeakReference) {
+                    Object subscriber = ((WeakReference)weakReferenceObj).get();
+                    if (subscriber != null && subscriber == registeredSubscriber) {
+                        isPermissionGranted = true;
+                        break;
+                    }
                 }
             }
             if(isPermissionGranted) {
@@ -182,9 +179,10 @@ public abstract class AbstractBroadcastCenter
     }
 
     @Override
-    public Collection<WeakReference<Object>> getAllSubscribersWeakRef(Integer channelId) throws NoSuchChannelException {
+    public Collection<? extends WeakReference<?>> getAllSubscribersWeakRef(Integer channelId) throws NoSuchChannelException {
         try {
-            Channel channel = getChannel(channelId);
+            Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                    ConcurrentHashMap<Integer,WeakReference<Object>>> channel = getChannel(channelId);
             return channel.getAllSubscribersReferenceList();
         }catch (NullObjectException e){
             e.printStackTrace();
@@ -196,11 +194,7 @@ public abstract class AbstractBroadcastCenter
     public <T> void broadcast(T msg){
         try {
             runBroadcastTask(Channel.DEFAULT_CHANNEL_ID, msg);
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (IllegalChannelStateException e){
+        }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
             e.printStackTrace();
         }
     }
@@ -217,11 +211,7 @@ public abstract class AbstractBroadcastCenter
     public <T> void broadcast(Integer channelId, T msg, Integer... subscribers){
         try {
             runBroadcastTask(channelId, msg, subscribers);
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }catch (NullObjectException e){
-            e.printStackTrace();
-        }catch (IllegalChannelStateException e){
+        }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
             e.printStackTrace();
         }
     }
@@ -238,13 +228,7 @@ public abstract class AbstractBroadcastCenter
     public <V, T> void broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers){
         try {
             runPrivateBroadcastTask(registeredSubscriber, channelId, msg, subscribers);
-        }catch (NoSuchChannelException e){
-            e.printStackTrace();
-        }catch (IllegalChannelStateException e){
-            e.printStackTrace();
-        }catch (PermissionException e){
-            e.printStackTrace();
-        }catch (NullObjectException e){
+        }catch (NoSuchChannelException | IllegalChannelStateException | PermissionException| NullObjectException e){
             e.printStackTrace();
         }
     }
@@ -257,12 +241,12 @@ public abstract class AbstractBroadcastCenter
         executorService.execute(new PrivateMsgTasKRunner<>(registeredSubscriber, channelId, msg, subscribers));
     }
 
-    protected class ChannelStateTasKRunner implements Runnable{
+    private class ChannelStateTasKRunner implements Runnable{
 
         private Integer channelId;
         private ChannelState state;
 
-        public ChannelStateTasKRunner(Integer channelId, ChannelState state) {
+         ChannelStateTasKRunner(Integer channelId, ChannelState state) {
             this.channelId = channelId;
             this.state = state;
             new Thread(this, String.valueOf(channelId));
@@ -290,11 +274,7 @@ public abstract class AbstractBroadcastCenter
                             break;
                     }
                 }
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (IllegalChannelStateException e){
+            }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
                 e.printStackTrace();
             }finally {
                 channelStateChangerLock.unlock();
@@ -302,13 +282,13 @@ public abstract class AbstractBroadcastCenter
         }
     }
 
-    protected class MsgTasKRunner<T> implements Runnable{
+    private class MsgTasKRunner<T> implements Runnable{
 
         private Integer channelId;
         private T msg;
         private Integer[] subscribers;
 
-        public MsgTasKRunner(Integer channelId, T msg, Integer... subscribers) {
+        MsgTasKRunner(Integer channelId, T msg, Integer... subscribers) {
             this.channelId = channelId;
             this.msg = msg;
             this.subscribers = subscribers;
@@ -319,24 +299,20 @@ public abstract class AbstractBroadcastCenter
         public void run(){
             try{
                 runBroadcastTask(channelId, msg, subscribers);
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (IllegalChannelStateException e){
+            }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
                 e.printStackTrace();
             }
         }
     }
 
-    protected class PrivateMsgTasKRunner<V, T> implements Runnable{
+    private class PrivateMsgTasKRunner<V, T> implements Runnable{
 
         private Integer channelId;
         private T msg;
         private V registeredSubscriber;
         private Integer[] subscribers;
 
-        public PrivateMsgTasKRunner(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
+        PrivateMsgTasKRunner(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers) {
             this.registeredSubscriber = registeredSubscriber;
             this.channelId = channelId;
             this.msg = msg;
@@ -348,25 +324,19 @@ public abstract class AbstractBroadcastCenter
         public void run(){
             try{
                 runPrivateBroadcastTask(registeredSubscriber, channelId, msg, subscribers);
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (IllegalChannelStateException e){
-                e.printStackTrace();
-            }catch (PermissionException e){
+            }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException | PermissionException e){
                 e.printStackTrace();
             }
         }
     }
 
-    protected class SubscribeTaskRunner<T> implements Runnable{
+    private class SubscribeTaskRunner<T> implements Runnable{
 
         private Integer channelId;
         private Integer subscriberId;
         private T subscriber;
 
-        public SubscribeTaskRunner(Integer channelId, T subscriber, Integer subscriberId) {
+        SubscribeTaskRunner(Integer channelId, T subscriber, Integer subscriberId) {
             this.channelId = channelId;
             this.subscriberId = subscriberId;
             this.subscriber = subscriber;
@@ -377,28 +347,21 @@ public abstract class AbstractBroadcastCenter
         public void run(){
             try {
                 runSubscriptionTask(channelId, subscriber, subscriberId);
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (AlreadyExistsException e){
-                e.printStackTrace();
-            }catch (IllegalChannelStateException e){
-                e.printStackTrace();
-            }catch (PermissionException e){
+            }catch (NoSuchChannelException | NullObjectException | AlreadyExistsException
+                    | IllegalChannelStateException| PermissionException e){
                 e.printStackTrace();
             }
         }
     }
 
-    protected class SubscribePrivateTaskRunner<V, T> implements Runnable{
+    private class SubscribePrivateTaskRunner<V, T> implements Runnable{
 
         private Integer channelId;
         private Integer subscriberId;
         private V owner;
         private T subscriber;
 
-        public SubscribePrivateTaskRunner(V owner, Integer channelId, T subscriber, Integer subscriberId) {
+        SubscribePrivateTaskRunner(V owner, Integer channelId, T subscriber, Integer subscriberId) {
             this.owner = owner;
             this.channelId = channelId;
             this.subscriberId = subscriberId;
@@ -410,21 +373,14 @@ public abstract class AbstractBroadcastCenter
         public void run(){
             try {
                 runPrivateSubscriptionTask(owner, channelId, subscriber, subscriberId);
-            }catch (NoSuchChannelException e){
-                e.printStackTrace();
-            }catch (NullObjectException e){
-                e.printStackTrace();
-            }catch (AlreadyExistsException e){
-                e.printStackTrace();
-            }catch (IllegalChannelStateException e){
-                e.printStackTrace();
-            }catch (PermissionException e){
+            }catch (NoSuchChannelException | NullObjectException | AlreadyExistsException
+                    | IllegalChannelStateException |PermissionException e){
                 e.printStackTrace();
             }
         }
     }
 
-    protected  <T>void runBroadcastTask(Integer channelId, T msg, Integer... subscribers)
+    private   <T>void runBroadcastTask(Integer channelId, T msg, Integer... subscribers)
             throws NoSuchChannelException, IllegalChannelStateException, NullObjectException{
 
         Channel channel = getChannel(channelId);
@@ -439,20 +395,21 @@ public abstract class AbstractBroadcastCenter
         }
     }
 
-    protected <V, T>void runPrivateBroadcastTask(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)
+    private  <V, T>void runPrivateBroadcastTask(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)
             throws NoSuchChannelException, PermissionException, IllegalChannelStateException, NullObjectException{
 
         Channel channel = getChannel(channelId);
         if(channel.getChannelState() == ChannelState.OPEN){
             if(channel instanceof PrivateChannel){
-                PrivateChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-                        ConcurrentHashMap<Integer,WeakReference<Object>>> privateChannel = (PrivateChannel)channel;
+                PrivateChannel privateChannel = (PrivateChannel)channel;
                 boolean isPermissionGranted = false;
-                for(WeakReference weakReference : privateChannel.getSubscriberMap().values()){
-                    Object subscriber = weakReference.get();
-                    if(subscriber != null && subscriber == registeredSubscriber){
-                        isPermissionGranted = true;
-                        break;
+                for(Object weakReferenceObj : privateChannel.getSubscriberMap().values()){
+                    if(weakReferenceObj instanceof WeakReference) {
+                        Object subscriber = ((WeakReference)weakReferenceObj).get();
+                        if (subscriber != null && subscriber == registeredSubscriber) {
+                            isPermissionGranted = true;
+                            break;
+                        }
                     }
                 }
                 if(isPermissionGranted) {
@@ -472,7 +429,7 @@ public abstract class AbstractBroadcastCenter
         }
     }
 
-    protected <T>void runSubscriptionTask(Integer channelId, T subscriber, Integer subscriberId)
+    private  <T>void runSubscriptionTask(Integer channelId, T subscriber, Integer subscriberId)
             throws NoSuchChannelException, AlreadyExistsException, PermissionException, IllegalChannelStateException, NullObjectException{
 
         Channel channel = getChannel(channelId);
@@ -495,7 +452,7 @@ public abstract class AbstractBroadcastCenter
                 PrivateChannel privateChannel = (PrivateChannel)channel;
                 if(privateChannel.getChannelOwnerRef() != null
                         && privateChannel.getChannelOwnerRef().get() != null){
-                    if(privateChannel.getChannelOwnerRef().get().equals(owner)) {
+                    if(Utils.isEqual(privateChannel.getChannelOwnerRef().get(), owner)) {
                         privateChannel.addSubscriber(subscriber, subscriberId);
                     }else{
                         throw new PermissionException("Only the owner of the private channel is allowed to add subscribers to private channel");
@@ -509,12 +466,12 @@ public abstract class AbstractBroadcastCenter
         }
     }
 
-    public ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+    protected ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
             ConcurrentHashMap<Integer, WeakReference<Object>>>> getChannelMap() {
         return channelMap;
     }
 
-    public ExecutorService getExecutorService() {
+    protected ExecutorService getExecutorService() {
         return executorService;
     }
 }

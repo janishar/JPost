@@ -16,11 +16,6 @@
 
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.exceptions.AlreadyExistsException;
-import com.mindorks.jpost.exceptions.IllegalChannelStateException;
-import com.mindorks.jpost.exceptions.InvalidPropertyException;
-import com.mindorks.jpost.exceptions.NullObjectException;
-
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

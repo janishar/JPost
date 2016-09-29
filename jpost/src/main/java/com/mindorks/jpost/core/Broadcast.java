@@ -276,18 +276,24 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      *
      * @param subscriber
      * @param <T>
+     * @throws InvalidSubscriberException
+     * @throws NoSuchChannelException
+     * @throws NullObjectException
      */
      <T> void removeSubscriber(T subscriber)
-             throws InvalidPropertyException, NoSuchChannelException, NullObjectException;
+             throws InvalidSubscriberException, NoSuchChannelException, NullObjectException;
 
     /**
      *
      * @param channelId
      * @param subscriber
      * @param <T>
+     * @throws InvalidSubscriberException
+     * @throws NoSuchChannelException
+     * @throws NullObjectException
      */
      <T> void removeSubscriber(Integer channelId, T subscriber)
-             throws InvalidPropertyException, NoSuchChannelException, NullObjectException;
+             throws InvalidSubscriberException, NoSuchChannelException, NullObjectException;
 
     /**
      *
@@ -295,9 +301,13 @@ public interface Broadcast<C extends Channel<? extends PriorityBlockingQueue<? e
      * @param channelId
      * @param subscriberId
      * @param <T>
+     * @throws InvalidSubscriberException
+     * @throws NoSuchChannelException
+     * @throws PermissionException
+     * @throws NullObjectException
      */
      <T> void removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId)
-             throws InvalidPropertyException, NoSuchChannelException, PermissionException, NullObjectException;
+             throws InvalidSubscriberException, NoSuchChannelException, PermissionException, NullObjectException;
 
     /**
      *

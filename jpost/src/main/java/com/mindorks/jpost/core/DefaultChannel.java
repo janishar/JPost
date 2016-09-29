@@ -18,7 +18,7 @@ package com.mindorks.jpost.core;
 
 import com.mindorks.jpost.exceptions.AlreadyExistsException;
 import com.mindorks.jpost.exceptions.IllegalChannelStateException;
-import com.mindorks.jpost.exceptions.InvalidPropertyException;
+import com.mindorks.jpost.exceptions.InvalidSubscriberException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.annotation.Annotation;
@@ -55,25 +55,24 @@ public class DefaultChannel<
 
         while (!getPostQueue().isEmpty()) {
             WeakReference<ChannelPost> msgRef = getPostQueue().poll();
-            if (msgRef == null) {
-                return;
-            }
-            ChannelPost mspPost = msgRef.get();
-            if (mspPost != null && mspPost.getChannelId() != null) {
-                if (mspPost.getChannelId().equals(getChannelId())) {
-                    for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
-                        Object subscriberObj = subscriberRef.get();
-                        if (subscriberObj != null) {
-                            for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
-                                Annotation annotation = method.getAnnotation(OnMessage.class);
-                                if (annotation != null) {
-                                    deliverMessage(subscriberObj, (OnMessage) annotation, method, mspPost);
+            if (msgRef != null) {
+                ChannelPost mspPost = msgRef.get();
+                if (mspPost != null && mspPost.getChannelId() != null) {
+                    if (mspPost.getChannelId().equals(getChannelId())) {
+                        for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
+                            Object subscriberObj = subscriberRef.get();
+                            if (subscriberObj != null) {
+                                for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
+                                    Annotation annotation = method.getAnnotation(OnMessage.class);
+                                    if (annotation != null) {
+                                        deliverMessage(subscriberObj, (OnMessage) annotation, method, mspPost);
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        getPostQueue().offer(msgRef);
                     }
-                } else {
-                    getPostQueue().offer(msgRef);
                 }
             }
         }
@@ -97,9 +96,7 @@ public class DefaultChannel<
                     method.invoke(subscriber, post.getMessage());
                 }
                 return true;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -126,7 +123,7 @@ public class DefaultChannel<
     }
 
     @Override
-    public synchronized <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidPropertyException {
+    public synchronized <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidSubscriberException {
         if(subscriber == null){
             throw new NullObjectException("subscriber is null");
         }
@@ -142,7 +139,7 @@ public class DefaultChannel<
             }
         }
         if(!isRemoved){
-            throw new InvalidPropertyException("Subscriber  do not exists");
+            throw new InvalidSubscriberException("Subscriber do not exists");
         }
     }
 }

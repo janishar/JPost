@@ -97,9 +97,9 @@ public interface Channel<Q extends PriorityBlockingQueue<? extends WeakReference
      * @param subscriber
      * @param <T>
      * @throws NullObjectException
-     * @throws InvalidPropertyException
+     * @throws InvalidSubscriberException
      */
-    <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidPropertyException;
+    <T> void removeSubscriber(T subscriber) throws NullObjectException, InvalidSubscriberException;
 
     <T, P extends Post<?, ?>>boolean deliverMessage(T subscriber, OnMessage msgAnnotation, Method method, P post);
 

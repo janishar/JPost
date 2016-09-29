@@ -86,7 +86,11 @@ if(project.rootProject.file("local.properties").exists()){
         user = properties.getProperty('bintray.user')
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
-        dryRun = true;
+
+        dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+        publish = false //[Default: false] Whether version should be auto published after an upload
+        override = false //[Default: false] Whether to override version artifacts already published
+
         pkg {
             repo = 'mindorks'
             name = 'jpost'
@@ -101,6 +105,17 @@ if(project.rootProject.file("local.properties").exists()){
                 vcsTag = ver
                 attributes = ['java': '1.7']
             }
+//            gpg {
+//                sign = true //Determines whether to GPG sign the files. The default is false
+//                passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
+//            }
+//            mavenCentralSync {
+//                sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
+//                user = user //OSS user token
+//                password = properties.getProperty('bintray.gpg.password') //OSS user password
+//                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+//            }
+
         }
     }
 }

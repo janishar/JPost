@@ -39,23 +39,28 @@ public class JPost{
 
     private static ReentrantLock JPostBootLock = new ReentrantLock();
 
-    protected static ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+    private static ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
             ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap;
 
-    protected static Broadcast broadcastCenter;
-    protected static DefaultChannel channel;
-    protected static int threadCount;
-    protected static ExecutorService executorService;
+    private static Broadcast<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer,WeakReference<Object>>>> broadcastCenter;
+
+    private static AndroidDefaultChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+            ConcurrentHashMap<Integer,WeakReference<Object>>> channel;
+
+    private static int threadCount;
+    private static ExecutorService executorService;
 
     static {
         init();
     }
 
-    protected static void init(){
+    private static void init(){
         threadCount = Runtime.getRuntime().availableProcessors() + 1;
         executorService = Executors.newFixedThreadPool(threadCount);
         channelMap = new ConcurrentHashMap<>(Broadcast.CHANNEL_INITIAL_CAPACITY);
-        channel = new AndroidDefaultChannel(
+        channel = new AndroidDefaultChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
+                ConcurrentHashMap<Integer,WeakReference<Object>>>(
                 Channel.DEFAULT_CHANNEL_ID,
                 ChannelState.OPEN,
                 ChannelType.DEFAULT,
@@ -65,14 +70,16 @@ public class JPost{
                             public int compare(WeakReference<ChannelPost> o1, WeakReference<ChannelPost> o2) {
                                 ChannelPost post1 = o1.get();
                                 ChannelPost post2 = o2.get();
-                                if(post1 != null || post2 != null){
+                                if(post1 != null || post2 != null
+                                        || post1.getPriority() != null
+                                        || post2.getPriority() != null){
                                     return post1.getPriority().compareTo(post2.getPriority());
                                 }else{
                                     return 0;
                                 }
                             }
                         }),
-                new ConcurrentHashMap<>(Channel.SUBSCRIBER_INITIAL_CAPACITY));
+                new ConcurrentHashMap<Integer,WeakReference<Object>>(Channel.SUBSCRIBER_INITIAL_CAPACITY));
 
         channelMap.put(Channel.DEFAULT_CHANNEL_ID, channel);
         broadcastCenter = new AndroidBroadcastCenter(channelMap, executorService);

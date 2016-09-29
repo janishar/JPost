@@ -16,7 +16,7 @@
 
 package com.mindorks.jpost.core;
 
-import com.mindorks.jpost.exceptions.InvalidPropertyException;
+import com.mindorks.jpost.exceptions.InvalidSubscriberException;
 import com.mindorks.jpost.exceptions.NullObjectException;
 
 import java.lang.ref.WeakReference;
@@ -38,18 +38,18 @@ public class PrivateChannel<
         this.channelOwnerRef = channelOwnerRef;
     }
 
-    public WeakReference<Object> getChannelOwnerRef() {
+    protected WeakReference<Object> getChannelOwnerRef() {
         return channelOwnerRef;
     }
 
-    public synchronized void removeSubscriber(Integer subscriberId) throws NullObjectException,InvalidPropertyException {
+    protected synchronized void removeSubscriber(Integer subscriberId) throws NullObjectException,InvalidSubscriberException {
         if(subscriberId == null){
             throw new NullObjectException("subscriberId is null");
         }
         if(getSubscriberMap().containsKey(subscriberId)){
             getSubscriberMap().remove(subscriberId);
         }else{
-            throw new InvalidPropertyException("Subscriber with subscriberId " + subscriberId + " do not exists");
+            throw new InvalidSubscriberException("Subscriber with subscriberId " + subscriberId + " do not exists");
         }
     }
 }

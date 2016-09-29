@@ -64,25 +64,21 @@ public class AndroidPublicChannel<Q extends PriorityBlockingQueue<WeakReference<
                     }
                 }
                 return true;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
         return false;
     }
 
-    protected <T>void runOnUiThread(final T subscriber,final Method method,final Post post){
+    private <T>void runOnUiThread(final T subscriber,final Method method,final Post post){
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 try {
                     method.setAccessible(true);
                     method.invoke(subscriber, post.getMessage());
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
