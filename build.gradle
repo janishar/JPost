@@ -9,6 +9,12 @@ repositories {
     mavenCentral()
 }
 
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 //    compile project(':jpost')
