@@ -197,15 +197,17 @@ dependencies {
 ### Step 3: Subscribe and attach a message recipient to a class
 ```java
      public SubscriberA() {
+        // TO ADD SUBSCRIBER SYNCHRONOUSLY 
         try {
             JPost.getBroadcastCenter().addSubscriber(ChannelIds.publicChannel1, this);
-            
-            // TO ADD SUBSCRIBER ASYNCHRONOUSLY 
-            // JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);
         }catch (PermissionException | NoSuchChannelException | AlreadyExistsException 
                   | IllegalChannelStateException | NullObjectException e){
             e.printStackTrace();
         }
+        
+        ...
+        // TO ADD SUBSCRIBER ASYNCHRONOUSLY 
+        // JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);
     }
     
     @OnMessage(channelId = ChannelIds.publicChannel1)
