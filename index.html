@@ -20,9 +20,9 @@
 
     <section class="main-content">
       <h1>
-<a id="jpost-java-class-communication-library" class="anchor" href="#jpost-java-class-communication-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JPost (Java class communication library)</h1>
+<a id="jpost-java-and-android-class-communication-library" class="anchor" href="#jpost-java-and-android-class-communication-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JPost (Java and Android class communication library)</h1>
 
-<p><a href="https://travis-ci.org/janishar/JPost"> <img src="https://travis-ci.org/janishar/JPost.svg?branch=master" alt="Build Status"> </a>
+<p><a href="https://travis-ci.org/janishar/JPost"><img src="https://travis-ci.org/janishar/JPost.svg?branch=master" alt="Build Status"></a>
 <a href="https://bintray.com/janishar/mindorks/jpost/_latestVersion"> <img src="https://api.bintray.com/packages/janishar/mindorks/jpost/images/download.svg" alt="Download"> </a>
 <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=102" alt="Open Source Love"></a>
 <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a></p>
@@ -31,7 +31,7 @@
 <a id="intro" class="anchor" href="#intro" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Intro</h1>
 
 <h3>
-<a id="this-library-is-designed-for-the-communication-between-classes-in-java-by-sending-and-receiving-messages-messages-can-be-any-object" class="anchor" href="#this-library-is-designed-for-the-communication-between-classes-in-java-by-sending-and-receiving-messages-messages-can-be-any-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This library is designed for the communication between classes in java by sending and receiving messages. Messages can be any object.</h3>
+<a id="this-library-is-designed-for-the-communication-between-classes-in-java--android-by-sending-and-receiving-messages-messages-can-be-any-object" class="anchor" href="#this-library-is-designed-for-the-communication-between-classes-in-java--android-by-sending-and-receiving-messages-messages-can-be-any-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This library is designed for the communication between classes in java / android by sending and receiving messages. Messages can be any object.</h3>
 
 <p>The design of this library is such that the modularity of the code is enhanced and provide a controlled system for sending and receiving messages. One of the key advantages of this library is that the message handling can be done both synchronusly(if the sender thread is same as the receiver thread) or asynchronously as provided. All the subscribing classes are holded with weakreferences, hense the memory leak do not take place. The usecases in which this library's power can be understood is when compared to other pub/sub libraries. Situations in which many instances of a single class require to process messages based on the sender. Example: A class wants to send message to few of the instances of the same class. The schema diagram provided below will provide a better insight.</p>
 
@@ -57,20 +57,20 @@
 
 <p align="center">
   <img src="https://janishar.github.io/images/jpost_viz.png" width="400">
-  </p><h3 align="center">
-<a id="communication-model" class="anchor" href="#communication-model" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Communication Model
+  </p><h4 align="center">
+<a id="communication-model" class="anchor" href="#communication-model" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Communication Model</h4>
 
 
-</h3><p>
+<p>
 </p>
 
 <p align="center">
   <img src="https://janishar.github.io/images/jpost_exe_viz.png" width="750">
-  </p><h3 align="center">
-<a id="execution-model" class="anchor" href="#execution-model" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Execution Model
+  </p><h4 align="center">
+<a id="execution-model" class="anchor" href="#execution-model" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Execution Model</h4>
 
 
-</h3><p>
+<p>
 </p>
 
 <hr>
@@ -82,35 +82,58 @@
 <h1>
 <a id="gradle" class="anchor" href="#gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle</h1>
 
-<div class="highlight highlight-source-java"><pre>dependencies {
-    compile <span class="pl-s"><span class="pl-pds">'</span>com.mindorks:jpost:0.0.1<span class="pl-pds">'</span></span>
+<h1>
+<a id="java" class="anchor" href="#java" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Java</h1>
+
+<div class="highlight highlight-source-groovy"><pre>dependencies {
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.mindorks:java-jpost:0.0.2<span class="pl-pds">'</span></span>
 }</pre></div>
+
+<h1>
+<a id="android" class="anchor" href="#android" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Android</h1>
+
+<div class="highlight highlight-source-groovy"><pre>dependencies {
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.mindorks:android-jpost:0.0.2<span class="pl-pds">'</span></span>
+}</pre></div>
+
+<h1>
+<a id="why-should-you-use-this-library" class="anchor" href="#why-should-you-use-this-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why should you use this library</h1>
+
+<ol>
+<li>In contrast to the existing pub-sub libraries, it hold the subscribers with weakreference. Thus it doesn't create memory leaks.</li>
+<li>Single message can be sent to selected subscribes. This avoids the problem of event getting received at undesirable places. Thus minimising the chances of abnormal application behaviour.</li>
+<li>The subscriber addition can be controlled by using private channels. It minimises the chances of adding subscribes by mistake to receive undesirable messages.</li>
+<li>It is a tiny library &lt; 55kb . Thus not effecting the application overall size.</li>
+<li>It facilicates synchronous as well as asynchronous message delivery and processing.</li>
+</ol>
 
 <h1>
 <a id="library-classes-overview" class="anchor" href="#library-classes-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Library Classes Overview</h1>
 
 <h1>
-<a id="jpost" class="anchor" href="#jpost" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JPost</h1>
+<a id="jpost" class="anchor" href="#jpost" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>JPost</code>
+</h1>
 
 <h3>
-<a id="the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" class="anchor" href="#the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The one point entry for this library is the class JPost. It contains static methods to access BroadcastCenter class and core functionality related to the library management.</h3>
+<a id="the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" class="anchor" href="#the-one-point-entry-for-this-library-is-the-class-jpost-it-contains-static-methods-to-access-broadcastcenter-class-and-core-functionality-related-to-the-library-management" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The one point entry for this library is the class <code>JPost</code>. It contains static methods to access <code>BroadcastCenter</code> class and core functionality related to the library management.</h3>
 
 <h2>
 <a id="methods" class="anchor" href="#methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Methods</h2>
 
 <ol>
 <li>
-<strong>JPost.getBroadcastCenter()</strong>: This method is used to get the instance of BroadcastCenter class (BroadcastCenter is described below)</li>
+<code>JPost.getBroadcastCenter()</code>: This method is used to get the instance of BroadcastCenter class (BroadcastCenter is described below)</li>
 <li>
-<strong>JPost.shutdown()</strong>: This method closes the JPost for the async operations and removes all the pool threads. It should called when the program terminates or as required. This call let the message delivery already in process to continue.</li>
+<code>JPost.shutdown()</code>: This method closes the <code>JPost</code> for the async operations and removes all the pool threads. It should called when the program terminates or as required. This call let the message delivery already in process to continue.</li>
 <li>
-<strong>JPost.haltAndShutdown()</strong>: This method does the same operation as do the <strong>JPost.shutdown()</strong> but it also removes all the message delivery tasks.;</li>
+<code>JPost.haltAndShutdown()</code>: This method does the same operation as do the <code>JPost.shutdown()</code> but it also removes all the message delivery tasks.;</li>
 </ol>
 
 <hr>
 
 <h1>
-<a id="broadcastcenter" class="anchor" href="#broadcastcenter" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BroadcastCenter</h1>
+<a id="broadcastcenter" class="anchor" href="#broadcastcenter" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>BroadcastCenter</code>
+</h1>
 
 <h3>
 <a id="this-class-proivdes-all-the-functionality-attached-with-this-library" class="anchor" href="#this-class-proivdes-all-the-functionality-attached-with-this-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This class proivdes all the functionality attached with this library.</h3>
@@ -120,57 +143,57 @@
 
 <ol>
 <li>
-<strong>createPrivateChannel(T owner, Integer channelId)</strong>: Creates a private channel requiring a unique int channel id. The owner is assigned owner.hashCode() as subscriber id.</li>
+<code>createPrivateChannel(T owner, Integer channelId)</code>: Creates a private channel requiring a unique int channel id. The owner is assigned <code>owner.hashCode()</code> as subscriber id.</li>
 <li>
-<strong>createPrivateChannel(T owner, Integer channelId, Integer subscriberId)</strong>: Creates a private channel requiring a unique int channel id. The owner is given subscriberId as subscriber id.</li>
+<code>createPrivateChannel(T owner, Integer channelId, Integer subscriberId)</code>: Creates a private channel requiring a unique int channel id. The owner is given <code>subscriberId</code> as subscriber id.</li>
 <li>
-<strong>createPublicChannel(Integer channelId)</strong>: Creates a public channel requiring a unique int channel id.</li>
+<code>createPublicChannel(Integer channelId)</code>: Creates a public channel requiring a unique int channel id.</li>
 <li>
-<strong>stopChannel(Integer channelId)</strong>: Stops the channel with channel id temporarily.</li>
+<code>stopChannel(Integer channelId)</code>: Stops the channel with channel id temporarily.</li>
 <li>
-<strong>reopenChannel(Integer channelId)</strong>: Reopen the channel which has been stopped but not terminated.</li>
+<code>reopenChannel(Integer channelId)</code>: Reopen the channel which has been stopped but not terminated.</li>
 <li>
-<strong>terminateChannel(Integer channelId)</strong>: Completely removes the channel and can not be used later.</li>
+<code>terminateChannel(Integer channelId)</code>: Completely removes the channel and can not be used later.</li>
 <li>
-<strong>getChannel(Integer channelId)</strong>: Return the channel with channel id else returns null.</li>
+<code>getChannel(Integer channelId)</code>: Return the channel with channel id else returns null.</li>
 <li>
-<strong>broadcast(T msg)</strong>: This method sends messages to all the subscribers of the default global channel.</li>
+<code>broadcast(T msg)</code>: This method sends messages to all the subscribers of the default global channel.</li>
 <li>
-<strong>broadcastAsync(T msg)</strong>: This method sends messages asynchronously to all the subscribers of the default global channel. The thread calling this methods can process with remaining processing as usual.</li>
+<code>broadcastAsync(T msg)</code>: This method sends messages asynchronously to all the subscribers of the default global channel. The thread calling this methods can process with remaining tasks as usual.</li>
 <li>
-<strong>broadcast(Integer channelId, T msg, Integer... subscribers)</strong>: This method sends messages to the subscribers of the channel of a particular channel id. If subscribers is not provided then all the subscribers of this channel receiver the message.</li>
+<code>broadcast(Integer channelId, T msg, Integer... subscribers)</code>: This method sends messages to the subscribers of the channel of a particular channel id. If subscribers is not provided then all the subscribers of this channel receiver the message.</li>
 <li>
-<strong>broadcastAsync(Integer channelId, T msg, Integer... subscribers)</strong>: Does the same as above(method 10) but asynchronously.</li>
+<code>broadcastAsync(Integer channelId, T msg, Integer... subscribers)</code>: Does the same as above(method 10) but asynchronously.</li>
 <li>
-<strong>broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)</strong>: This method is used to send message on a private channel. Only the registered subscribers can send and receive messges on private channel.</li>
+<code>broadcast(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)</code>: This method is used to send message on a private channel. Only the registered subscribers can send and receive messges on private channel.</li>
 <li>
-<strong>broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)</strong>:  Does the same as above(method 12) but asynchronously.</li>
+<code>broadcastAsync(V registeredSubscriber, Integer channelId, T msg, Integer... subscribers)</code>:  Does the same as above(method 12) but asynchronously.</li>
 <li>
-<strong>addSubscriber(T subscriber)</strong>: This method add subscribers to default global channel channels.</li>
+<code>addSubscriber(T subscriber)</code>: This method add subscribers to default global channel.</li>
 <li>
-<strong>void addSubscriber(Integer channelId, T subscriber)</strong>: This method add subscribers to public channels with subscriber having subscriber.hashCode() as the subscriber id.</li>
+<code>addSubscriber(Integer channelId, T subscriber)</code>: This method add subscribers to public channels with subscriber having <code>subscriber.hashCode()</code> as the subscriber id.</li>
 <li>
-<strong>addSubscriberAsync(Integer channelId, T subscriber)</strong>: Does the same as above(method 15) but asynchronously.</li>
+<code>addSubscriberAsync(Integer channelId, T subscriber)</code>: Does the same as above(method 15) but asynchronously.</li>
 <li>
-<strong>addSubscriber(Integer channelId, T subscriber, Integer subscriberId)</strong>: This method add subscribers to public channels with subscriber having subscriberId as the subscriber id.</li>
+<code>addSubscriber(Integer channelId, T subscriber, Integer subscriberId)</code>: This method add subscribers to public channels with subscriber having <code>subscriberId</code> as the subscriber id.</li>
 <li>
-<strong>addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId)</strong>: Does the same as above(method 17) but asynchronously.</li>
+<code>addSubscriberAsync(Integer channelId, T subscriber, Integer subscriberId)</code>: Does the same as above(method 17) but asynchronously.</li>
 <li>
-<strong>addSubscriber(V owner, Integer channelId, T subscriber)</strong>: This method add subscribers to private channels. Only owner of the channel can add subscribers to this channel. The subscriber is given subscriber.hashCode() as the subscriber id.</li>
+<code>addSubscriber(V owner, Integer channelId, T subscriber)</code>: This method add subscribers to private channels. Only owner of the channel can add subscribers to this channel. The subscriber is given subscriber.hashCode() as the subscriber id.</li>
 <li>
-<strong>addSubscriberAsync(V owner, Integer channelId, T subscriber)</strong>: Does the same as above(method 19) but asynchronously.</li>
+<code>addSubscriberAsync(V owner, Integer channelId, T subscriber)</code>: Does the same as above(method 19) but asynchronously.</li>
 <li>
-<strong>addSubscriber(V owner, Integer channelId, T subscriber, Integer subscriberId)</strong>: This method add subscribers to private channels. Only owner of the channel can add subscribers to this channel. The subscriber is given subscriberId as the subscriber id.</li>
+<code>addSubscriber(V owner, Integer channelId, T subscriber, Integer subscriberId)</code>: This method add subscribers to private channels. Only owner of the channel can add subscribers to this channel. The subscriber is given <code>subscriberId</code> as the subscriber id.</li>
 <li>
-<strong>addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId)</strong>: Does the same as above(method 21) but asynchronously.</li>
+<code>addSubscriberAsync(V owner, Integer channelId, T subscriber, Integer subscriberId)</code>: Does the same as above(method 21) but asynchronously.</li>
 <li>
-<strong>removeSubscriber(T subscriber)</strong>: Removes subscriber form the default global channel.</li>
+<code>removeSubscriber(T subscriber)</code>: Removes subscriber form the default global channel.</li>
 <li>
-<strong>removeSubscriber(Integer channelId, T subscriber)</strong>: Removes subscriber form a public channel.</li>
+<code>removeSubscriber(Integer channelId, T subscriber)</code>: Removes subscriber form a public channel.</li>
 <li>
-<strong>removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId)</strong>: Removes subscriber form a private channel. Only registered subscribers of the private channel can remove a subscriber.</li>
+<code>removeSubscriber(T registeredSubscriber, Integer channelId, Integer subscriberId)</code>: Removes subscriber form a private channel. Only registered subscribers of the private channel can remove a subscriber.</li>
 <li>
-<strong>getAllSubscribersWeakRef()</strong>: returns a collection of weakreference holding the subscriber. </li>
+<code>getAllSubscribersWeakRef()</code>: returns a collection of weakreference holding the subscriber. </li>
 </ol>
 
 <hr>
@@ -179,17 +202,41 @@
 <a id="receiving-messages" class="anchor" href="#receiving-messages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receiving Messages</h1>
 
 <h3>
-<a id="the-messages-are-received-via-onmessage-method-annotation-the-class-subscribing-any-message-has-to-create-a-method-with-message-object-as-the-parameter-and-annotate-it-with-onmessage" class="anchor" href="#the-messages-are-received-via-onmessage-method-annotation-the-class-subscribing-any-message-has-to-create-a-method-with-message-object-as-the-parameter-and-annotate-it-with-onmessage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The messages are received via OnMessage method annotation. The class subscribing any message has to create a method with message object as the parameter and annotate it with @OnMessage.</h3>
+<a id="the-messages-are-received-via-onmessage-method-annotation-the-class-subscribing-any-message-has-to-create-a-method-with-message-object-as-the-parameter-and-annotate-it-with-onmessage" class="anchor" href="#the-messages-are-received-via-onmessage-method-annotation-the-class-subscribing-any-message-has-to-create-a-method-with-message-object-as-the-parameter-and-annotate-it-with-onmessage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The messages are received via <code>@OnMessage</code> method annotation. The class subscribing any message has to create a method with message object as the parameter and annotate it with <code>@OnMessage</code>.</h3>
 
 <h3>
-<a id="onmessage-parameters" class="anchor" href="#onmessage-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>@OnMessage Parameters</h3>
+<a id="onmessage-parameters" class="anchor" href="#onmessage-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>@OnMessage</code> Parameters</h3>
 
 <ol>
 <li>
-<strong>channelId</strong>: This parameter in the annotation, attaches the message reception to a particular channel on which the class has subscribed. If not provided will be listening to the default global channel.</li>
+<code>channelId</code>: This parameter in the annotation, attaches the message reception to a particular channel on which the class has subscribed. If not provided will be listening to the default global channel.</li>
 <li>
-<strong>isCommonReceiver</strong>: This parameter sets the message reception from any channel on which the class has subscribed.</li>
+<code>isCommonReceiver</code>: This parameter sets the message reception from any channel on which the class has subscribed.</li>
 </ol>
+
+<h1>
+<a id="android-note" class="anchor" href="#android-note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Android Note:</h1>
+
+<h3>
+<a id="onuithread--this-annotation-run-the-code-in-ui--main-thread" class="anchor" href="#onuithread--this-annotation-run-the-code-in-ui--main-thread" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>@OnUiThread</code> : This annotation run the code in UI / main thread</h3>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">@OnUiThread</span>
+    <span class="pl-k">@OnMessage</span>
+    <span class="pl-k">private</span> <span class="pl-k">void</span> onMessage(<span class="pl-k">final</span> <span class="pl-smi">Message</span> msg){
+        textView<span class="pl-k">.</span>setText(msg<span class="pl-k">.</span>getMsg());
+    }</pre></div>
+
+<h1>
+<a id="proguard-note" class="anchor" href="#proguard-note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Proguard Note:</h1>
+
+<h3>
+<a id="if-you-are-using-proguard-then-add-this-rule-in-proguard-projecttxt" class="anchor" href="#if-you-are-using-proguard-then-add-this-rule-in-proguard-projecttxt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If you are using proguard, then add this rule in proguard-project.txt</h3>
+
+<div class="highlight highlight-source-groovy"><pre>  <span class="pl-k">-</span>keepattributes <span class="pl-k">*</span><span class="pl-k">Annotation</span><span class="pl-k">*</span>
+  <span class="pl-k">-</span>keepclassmembers class <span class="pl-k">**</span> {
+    <span class="pl-k">@com.mindorks.jpost.annotations.OnMessage</span> <span class="pl-k">&lt;</span>methods<span class="pl-k">&gt;</span>;
+    <span class="pl-k">@com.mindorks.androidjpost.droid.OnUiThread</span> <span class="pl-k">&lt;</span>methods<span class="pl-k">&gt;</span>;
+  }</pre></div>
 
 <h2>
 <a id="example-1-sending-and-receiving-messages-over-default-global-channel" class="anchor" href="#example-1-sending-and-receiving-messages-over-default-global-channel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 1: Sending and receiving messages over default global channel</h2>
@@ -223,15 +270,7 @@
 <div class="highlight highlight-source-java"><pre>    <span class="pl-k">public</span> SubscriberA() {
         <span class="pl-k">try</span> {
             <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-v">this</span>);
-        }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
-            e<span class="pl-k">.</span>printStackTrace();
-        }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
-            e<span class="pl-k">.</span>printStackTrace();
-        }
-
-        <span class="pl-k">try</span> {
-            <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-v">this</span>);
-        }<span class="pl-k">catch</span> (<span class="pl-smi">Exception</span> e){
+        }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> <span class="pl-k">|</span> <span class="pl-smi">NullObjectException</span> e){
             e<span class="pl-k">.</span>printStackTrace();
         }
     }
@@ -283,15 +322,8 @@
 
             <span class="pl-c">// TO ADD SUBSCRIBER ASYNCHRONOUSLY </span>
             <span class="pl-c">// JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);</span>
-        }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> e){
-            e<span class="pl-k">.</span>printStackTrace();
-        }<span class="pl-k">catch</span> (<span class="pl-smi">NoSuchChannelException</span> e){
-            e<span class="pl-k">.</span>printStackTrace();
-        }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
-            e<span class="pl-k">.</span>printStackTrace();
-        }<span class="pl-k">catch</span> (<span class="pl-smi">IllegalChannelStateException</span> e){
-            e<span class="pl-k">.</span>printStackTrace();
-        }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
+        }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> <span class="pl-k">|</span> <span class="pl-smi">NoSuchChannelException</span> <span class="pl-k">|</span> <span class="pl-smi">AlreadyExistsException</span> 
+                  <span class="pl-k">|</span> <span class="pl-smi">IllegalChannelStateException</span> <span class="pl-k">|</span> <span class="pl-smi">NullObjectException</span> e){
             e<span class="pl-k">.</span>printStackTrace();
         }
     }
@@ -318,7 +350,6 @@
 <a id="example-3-creating-private-channel-adding-subscribersonly-creatorowner-of-the-channel-has-adding-subscribers-right-and-sending-and-receiving-messages-over-it" class="anchor" href="#example-3-creating-private-channel-adding-subscribersonly-creatorowner-of-the-channel-has-adding-subscribers-right-and-sending-and-receiving-messages-over-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 3: Creating private channel, adding subscribers(Only creator/owner of the channel has adding subscribers right) and sending and receiving messages over it</h2>
 
 <div class="highlight highlight-source-java"><pre>    <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ChannelIds</span> {
-        <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-k">int</span> publicChannel1 <span class="pl-k">=</span> <span class="pl-c1">1</span>;
         <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">final</span> <span class="pl-k">int</span> privateChannel1 <span class="pl-k">=</span> <span class="pl-c1">2</span>;
     }
 
@@ -332,15 +363,8 @@
     <span class="pl-c">// ADDING </span>
     <span class="pl-k">try</span> {
         <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-v">this</span>, <span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>privateChannel1, subscriberA);
-    }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">NoSuchChannelException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">IllegalChannelStateException</span> e){
+    }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> <span class="pl-k">|</span> <span class="pl-smi">NoSuchChannelException</span> <span class="pl-k">|</span> <span class="pl-smi">AlreadyExistsException</span> 
+                  <span class="pl-k">|</span> <span class="pl-smi">IllegalChannelStateException</span> <span class="pl-k">|</span> <span class="pl-smi">NullObjectException</span> e){
         e<span class="pl-k">.</span>printStackTrace();
     }
 
@@ -360,15 +384,8 @@
 <div class="highlight highlight-source-java"><pre>    <span class="pl-k">int</span> subscriberId <span class="pl-k">=</span> <span class="pl-c1">1</span>;
     <span class="pl-k">try</span> {
         <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-v">this</span>, subscriberId);
-    }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">NoSuchChannelException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">AlreadyExistsException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">IllegalChannelStateException</span> e){
-        e<span class="pl-k">.</span>printStackTrace();
-    }<span class="pl-k">catch</span> (<span class="pl-smi">NullObjectException</span> e){
+    }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> <span class="pl-k">|</span> <span class="pl-smi">NoSuchChannelException</span> <span class="pl-k">|</span> <span class="pl-smi">AlreadyExistsException</span> 
+                <span class="pl-k">|</span> <span class="pl-smi">IllegalChannelStateException</span> <span class="pl-k">|</span> <span class="pl-smi">NullObjectException</span> e){
         e<span class="pl-k">.</span>printStackTrace();
     }</pre></div>
 
@@ -382,21 +399,6 @@
                 <span class="pl-k">new</span> <span class="pl-smi">Message1</span>(<span class="pl-s"><span class="pl-pds">"</span>Application sending public message<span class="pl-pds">"</span></span>), subscriberId1, subscriberId2);
     }<span class="pl-k">catch</span> (<span class="pl-smi">JPostNotRunningException</span> e){
         e<span class="pl-k">.</span>printStackTrace();
-    }</pre></div>
-
-<h1>
-<a id="android-note" class="anchor" href="#android-note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Android Note:</h1>
-
-<h3>
-<a id="if-the-ui-has-to-be-updated-with-the-message-then-attach-a-runnable" class="anchor" href="#if-the-ui-has-to-be-updated-with-the-message-then-attach-a-runnable" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>If the UI has to be updated with the message then attach a runnable</h3>
-
-<div class="highlight highlight-source-java"><pre>  <span class="pl-k">@OnMessage</span>
-    <span class="pl-k">private</span> <span class="pl-k">void</span> onMessage(<span class="pl-k">final</span> <span class="pl-smi">Message</span> msg){
-        <span class="pl-v">this</span><span class="pl-k">.</span>runOnUiThread(<span class="pl-k">new</span> <span class="pl-smi">Runnable</span>() {
-            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
-                textView<span class="pl-k">.</span>setText(msg<span class="pl-k">.</span>getMsg());
-            }
-        });
     }</pre></div>
 
 <h1>
