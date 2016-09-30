@@ -18,7 +18,9 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.2-dev'
+def ver = '0.0.2'
+def toUpload = true;
+
 group 'com.mindorks'
 version ver
 
@@ -87,9 +89,9 @@ if(project.rootProject.file("local.properties").exists()){
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
 
-        dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
-        publish = false //[Default: false] Whether version should be auto published after an upload
-        override = false //[Default: false] Whether to override version artifacts already published
+        dryRun = !toUpload //[Default: false] Whether to run this as dry-run, without deploying
+//        publish = false //[Default: false] Whether version should be auto published after an upload
+//        override = false //[Default: false] Whether to override version artifacts already published
 
         pkg {
             repo = 'mindorks'
@@ -115,7 +117,6 @@ if(project.rootProject.file("local.properties").exists()){
 //                password = properties.getProperty('bintray.gpg.password') //OSS user password
 //                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
 //            }
-
         }
     }
 }

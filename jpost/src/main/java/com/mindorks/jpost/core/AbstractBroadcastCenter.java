@@ -471,7 +471,11 @@ public abstract class AbstractBroadcastCenter
         return channelMap;
     }
 
-    protected ExecutorService getExecutorService() {
+    public ExecutorService getExecutorService() {
         return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 }

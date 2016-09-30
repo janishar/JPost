@@ -18,7 +18,9 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.2-dev'
+def ver = '0.0.2'
+def toUpload = true;
+
 group 'com.mindorks'
 version ver
 
@@ -86,17 +88,17 @@ if(project.rootProject.file("local.properties").exists()){
         user = properties.getProperty('bintray.user')
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
-        dryRun = true;
+        dryRun = !toUpload;
         pkg {
             repo = 'mindorks'
             name = 'android-jpost'
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/janishar/JPost.git'
-            labels = ['android','event','java', 'communication', 'class', "modular code","pub-sub"]
+            labels = ['android','event','eventbus', 'java', 'communication', 'class', "modular code","pub-sub"]
             publicDownloadNumbers = true
             version {
                 name = ver
-                desc = 'java class communication library'
+                desc = 'android class communication library'
                 released  = new Date()
                 vcsTag = ver
                 attributes = ['java': '1.7']
@@ -117,7 +119,7 @@ dependencies {
 
 //    compileOnly 'com.google.android:android:4.1.1.4'
 //    compileOnly 'com.google.android:support-v4:r7'
-//    compile 'com.mindorks:jpost:0.0.2-dev'
+//    compile 'com.mindorks:jpost:0.0.2'
 
 }
 

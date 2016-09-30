@@ -1,5 +1,5 @@
 group 'com.mindorks'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 apply plugin: 'java'
 
@@ -15,8 +15,15 @@ allprojects {
     }
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'tes.mindorks.jpost.defaultchanneltest.app'
+        )
+    }
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-//    compile project(':jpost')
-    compile project(':android-jpost')
+    compile project(':java-jpost')
 }

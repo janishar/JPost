@@ -18,7 +18,9 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.2-dev'
+def ver = '0.0.2'
+def toUpload = true;
+
 group 'com.mindorks'
 version ver
 
@@ -86,7 +88,7 @@ if(project.rootProject.file("local.properties").exists()){
         user = properties.getProperty('bintray.user')
         key = properties.getProperty('bintray.apikey')
         publications = ['MyPublication']
-        dryRun = true;
+        dryRun = !toUpload;
         pkg {
             repo = 'mindorks'
             name = 'java-jpost'
@@ -111,8 +113,8 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-//    compile 'com.mindorks:jpost:0.0.2-dev'
     compile project(':jpost')
+//    compile 'com.mindorks:jpost:0.0.2'
 }
 
 //UPLOAD PROCEDURE

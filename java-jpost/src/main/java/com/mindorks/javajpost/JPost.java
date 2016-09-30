@@ -42,8 +42,7 @@ public class JPost {
     private static ConcurrentHashMap<Integer, Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
                 ConcurrentHashMap<Integer,WeakReference<Object>>>> channelMap;
 
-    private static Broadcast<Channel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
-            ConcurrentHashMap<Integer,WeakReference<Object>>>> broadcastCenter;
+    private static BroadcastCenter broadcastCenter;
 
     private static DefaultChannel<PriorityBlockingQueue<WeakReference<ChannelPost>>,
             ConcurrentHashMap<Integer,WeakReference<Object>>> channel;
@@ -92,6 +91,7 @@ public class JPost {
     public static void reboot(){
         JPostBootLock.lock();
         executorService = Executors.newFixedThreadPool(threadCount);
+        broadcastCenter.setExecutorService(executorService);
         JPostBootLock.unlock();
     }
 
