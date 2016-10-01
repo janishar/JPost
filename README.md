@@ -53,6 +53,7 @@ dependencies {
 3. The subscriber addition can be controlled by using private channels. It minimises the chances of adding subscribes by mistake to receive undesirable messages.
 4. It is a tiny library < 55kb . Thus not effecting the application overall size.
 5. It facilicates synchronous as well as asynchronous message delivery and processing.
+6. It provides a mechanism to run code asynchronously.
 
 # Library Classes Overview
 # `JPost`
@@ -280,6 +281,9 @@ dependencies {
         e.printStackTrace();
     }
 ```
+
+# Recent Library: [`PlaceHolderView`](https://github.com/janishar/PlaceHolderView)
+#### `PlaceHolderView` create views without any adapter in very modular form. It uses the power of RecyclerView and enhances it to another level. For the first time with the list view comes card stack view.
 
 # License
 
