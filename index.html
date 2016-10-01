@@ -105,6 +105,7 @@
 <li>The subscriber addition can be controlled by using private channels. It minimises the chances of adding subscribes by mistake to receive undesirable messages.</li>
 <li>It is a tiny library &lt; 55kb . Thus not effecting the application overall size.</li>
 <li>It facilicates synchronous as well as asynchronous message delivery and processing.</li>
+<li>It provides a mechanism to run code asynchronously.</li>
 </ol>
 
 <h1>
@@ -317,15 +318,17 @@
 <a id="step-3-subscribe-and-attach-a-message-recipient-to-a-class" class="anchor" href="#step-3-subscribe-and-attach-a-message-recipient-to-a-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Step 3: Subscribe and attach a message recipient to a class</h3>
 
 <div class="highlight highlight-source-java"><pre>     <span class="pl-k">public</span> SubscriberA() {
+        <span class="pl-c">// TO ADD SUBSCRIBER SYNCHRONOUSLY </span>
         <span class="pl-k">try</span> {
             <span class="pl-smi">JPost</span><span class="pl-k">.</span>getBroadcastCenter()<span class="pl-k">.</span>addSubscriber(<span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1, <span class="pl-v">this</span>);
-
-            <span class="pl-c">// TO ADD SUBSCRIBER ASYNCHRONOUSLY </span>
-            <span class="pl-c">// JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);</span>
         }<span class="pl-k">catch</span> (<span class="pl-smi">PermissionException</span> <span class="pl-k">|</span> <span class="pl-smi">NoSuchChannelException</span> <span class="pl-k">|</span> <span class="pl-smi">AlreadyExistsException</span> 
                   <span class="pl-k">|</span> <span class="pl-smi">IllegalChannelStateException</span> <span class="pl-k">|</span> <span class="pl-smi">NullObjectException</span> e){
             e<span class="pl-k">.</span>printStackTrace();
         }
+
+        <span class="pl-c1">...</span>
+        <span class="pl-c">// TO ADD SUBSCRIBER ASYNCHRONOUSLY </span>
+        <span class="pl-c">// JPost.getBroadcastCenter().addSubscriberAsync(ChannelIds.publicChannel1, this);</span>
     }
 
     <span class="pl-k">@OnMessage</span>(<span class="pl-c1">channelId</span> <span class="pl-k">=</span> <span class="pl-smi">ChannelIds</span><span class="pl-k">.</span>publicChannel1)
@@ -400,6 +403,13 @@
     }<span class="pl-k">catch</span> (<span class="pl-smi">JPostNotRunningException</span> e){
         e<span class="pl-k">.</span>printStackTrace();
     }</pre></div>
+
+<h1>
+<a id="recent-library-placeholderview" class="anchor" href="#recent-library-placeholderview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Recent Library: <a href="https://github.com/janishar/PlaceHolderView"><code>PlaceHolderView</code></a>
+</h1>
+
+<h4>
+<a id="placeholderview-create-views-without-any-adapter-in-very-modular-form-it-uses-the-power-of-recyclerview-and-enhances-it-to-another-level-for-the-first-time-with-the-list-view-comes-card-stack-view" class="anchor" href="#placeholderview-create-views-without-any-adapter-in-very-modular-form-it-uses-the-power-of-recyclerview-and-enhances-it-to-another-level-for-the-first-time-with-the-list-view-comes-card-stack-view" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>PlaceHolderView</code> create views without any adapter in very modular form. It uses the power of RecyclerView and enhances it to another level. For the first time with the list view comes card stack view.</h4>
 
 <h1>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
