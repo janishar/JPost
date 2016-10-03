@@ -194,7 +194,7 @@ public abstract class AbstractBroadcastCenter
     public <T> void broadcast(T msg){
         try {
             runBroadcastTask(Channel.DEFAULT_CHANNEL_ID, msg);
-        }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
+        }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException | PermissionException e){
             e.printStackTrace();
         }
     }
@@ -211,7 +211,7 @@ public abstract class AbstractBroadcastCenter
     public <T> void broadcast(Integer channelId, T msg, Integer... subscribers){
         try {
             runBroadcastTask(channelId, msg, subscribers);
-        }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
+        }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException | PermissionException e){
             e.printStackTrace();
         }
     }
@@ -299,7 +299,7 @@ public abstract class AbstractBroadcastCenter
         public void run(){
             try{
                 runBroadcastTask(channelId, msg, subscribers);
-            }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException e){
+            }catch (NoSuchChannelException | NullObjectException | IllegalChannelStateException | PermissionException e){
                 e.printStackTrace();
             }
         }
@@ -381,10 +381,13 @@ public abstract class AbstractBroadcastCenter
     }
 
     private   <T>void runBroadcastTask(Integer channelId, T msg, Integer... subscribers)
-            throws NoSuchChannelException, IllegalChannelStateException, NullObjectException{
+            throws NoSuchChannelException, IllegalChannelStateException, NullObjectException, PermissionException{
 
         Channel channel = getChannel(channelId);
         if(channel.getChannelState() == ChannelState.OPEN){
+            if(channel instanceof PrivateChannel){
+                throw new PermissionException("Only subscribers of private channel can send/receive messages over it");
+            }
             if(channel instanceof PublicChannel && subscribers.length > 0){
                 ((PublicChannel)channel).broadcast(msg, subscribers);
             }else {

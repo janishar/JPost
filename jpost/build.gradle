@@ -18,8 +18,8 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.2'
-def toUpload = true;
+def ver = '0.0.3'
+def toUpload = false;
 
 group 'com.mindorks'
 version ver
