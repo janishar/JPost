@@ -120,7 +120,7 @@ dependencies {
 ```groovy
   -keepattributes *Annotation*
   -keepclassmembers class ** {
-    @com.mindorks.jpost.annotations.OnMessage <methods>;
+    @com.mindorks.jpost.core.OnMessage <methods>;
     @com.mindorks.androidjpost.droid.OnUiThread <methods>;
   }
 ```
