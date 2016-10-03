@@ -38,13 +38,13 @@ The design of this library is such that the modularity of the code is enhanced a
 # Java
 ```groovy
 dependencies {
-    compile 'com.mindorks:java-jpost:0.0.2'
+    compile 'com.mindorks:java-jpost:0.0.3'
 }
 ```
 # Android
 ```groovy
 dependencies {
-    compile 'com.mindorks:android-jpost:0.0.2'
+    compile 'com.mindorks:android-jpost:0.0.3'
 }
 ```
 
