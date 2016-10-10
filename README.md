@@ -38,13 +38,13 @@ The design of this library is such that the modularity of the code is enhanced a
 # Java
 ```groovy
 dependencies {
-    compile 'com.mindorks:java-jpost:0.0.2'
+    compile 'com.mindorks:java-jpost:0.0.3'
 }
 ```
 # Android
 ```groovy
 dependencies {
-    compile 'com.mindorks:android-jpost:0.0.2'
+    compile 'com.mindorks:android-jpost:0.0.3'
 }
 ```
 
@@ -282,6 +282,9 @@ dependencies {
         e.printStackTrace();
     }
 ```
+# Example
+[Android Networking](https://medium.com/@janishar.ali/android-networking-bare-skin-understanding-jpost-5be25f3df4d6#.q21wa4wmy)
+
 
 # Recent Library: [`PlaceHolderView`](https://github.com/janishar/PlaceHolderView)
 #### `PlaceHolderView` create views without any adapter in very modular form. It uses the power of RecyclerView and enhances it to another level. For the first time with the list view comes card stack view.
