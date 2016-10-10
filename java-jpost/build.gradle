@@ -18,7 +18,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.3'
+def ver = '0.0.4'
 def toUpload = false;
 
 group 'com.mindorks'
@@ -115,7 +115,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
     compile project(':jpost')
-//    compile 'com.mindorks:jpost:0.0.3'
+//    compile 'com.mindorks:jpost:0.0.4'
 }
 
 //UPLOAD PROCEDURE

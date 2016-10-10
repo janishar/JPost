@@ -70,35 +70,29 @@ public class PublicChannel<
         getPostQueue().put(new WeakReference<>(post));
 
         while (!getPostQueue().isEmpty()) {
-            try {
-                WeakReference<ChannelPost> msgRef = getPostQueue().take();
-                if(msgRef != null) {
-                    ChannelPost mspPost = msgRef.get();
-                    if (mspPost != null && mspPost.getChannelId() != null) {
-                        if (mspPost.getChannelId().equals(getChannelId())) {
-                            for (Integer subscriberId : subscriberIds) {
-                                if (getSubscriberMap().containsKey(subscriberId)) {
-                                    WeakReference<Object> subscriberRef = getSubscriberMap().get(subscriberId);
-                                    if(subscriberRef != null) {
-                                        Object subscriberObj = subscriberRef.get();
-                                        if (subscriberObj != null) {
-                                            for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
-                                                Annotation annotation = method.getAnnotation(OnMessage.class);
-                                                if (annotation != null) {
-                                                    deliverMessage(subscriberObj, (OnMessage) annotation, method, mspPost);
-                                                }
+            WeakReference<ChannelPost> msgRef = getPostQueue().poll();
+            if(msgRef != null) {
+                ChannelPost mspPost = msgRef.get();
+                if (mspPost != null && mspPost.getChannelId() != null) {
+                    if (mspPost.getChannelId().equals(getChannelId())) {
+                        for (Integer subscriberId : subscriberIds) {
+                            if (getSubscriberMap().containsKey(subscriberId)) {
+                                WeakReference<Object> subscriberRef = getSubscriberMap().get(subscriberId);
+                                if(subscriberRef != null) {
+                                    Object subscriberObj = subscriberRef.get();
+                                    if (subscriberObj != null) {
+                                        for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
+                                            Annotation annotation = method.getAnnotation(OnMessage.class);
+                                            if (annotation != null) {
+                                                deliverMessage(subscriberObj, (OnMessage) annotation, method, mspPost);
                                             }
                                         }
                                     }
                                 }
                             }
-                        } else {
-                            getPostQueue().put(msgRef);
                         }
                     }
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }

@@ -18,7 +18,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7"
 }
 
-def ver = '0.0.3'
+def ver = '0.0.4'
 def toUpload = false;
 
 group 'com.mindorks'
@@ -119,7 +119,7 @@ dependencies {
 
 //    compileOnly 'com.google.android:android:4.1.1.4'
 //    compileOnly 'com.google.android:support-v4:r7'
-//    compile 'com.mindorks:jpost:0.0.3'
+//    compile 'com.mindorks:jpost:0.0.4'
 
 }
 

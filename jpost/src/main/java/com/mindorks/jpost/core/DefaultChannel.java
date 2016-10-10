@@ -59,8 +59,10 @@ public class DefaultChannel<
                 ChannelPost mspPost = msgRef.get();
                 if (mspPost != null && mspPost.getChannelId() != null) {
                     if (mspPost.getChannelId().equals(getChannelId())) {
-                        for (WeakReference<Object> subscriberRef : getSubscriberMap().values()) {
-                            Object subscriberObj = subscriberRef.get();
+                        Iterator<WeakReference<Object>> iterator = getSubscriberMap().values().iterator();
+                        while (iterator.hasNext()) {
+                            WeakReference<Object> weakReference = iterator.next();
+                            Object subscriberObj = weakReference.get();
                             if (subscriberObj != null) {
                                 for (final Method method : subscriberObj.getClass().getDeclaredMethods()) {
                                     Annotation annotation = method.getAnnotation(OnMessage.class);
@@ -68,10 +70,10 @@ public class DefaultChannel<
                                         deliverMessage(subscriberObj, (OnMessage) annotation, method, mspPost);
                                     }
                                 }
+                            }else{
+                                getSubscriberMap().values().remove(weakReference);
                             }
                         }
-                    } else {
-                        getPostQueue().offer(msgRef);
                     }
                 }
             }
