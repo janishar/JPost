@@ -53,7 +53,7 @@ dependencies {
 2. Single message can be sent to selected subscribes. This avoids the problem of event getting received at undesirable places. Thus minimising the chances of abnormal application behaviour.
 3. The subscriber addition can be controlled by using private channels. It minimises the chances of adding subscribes by mistake to receive undesirable messages.
 4. It is a tiny library < 55kb . Thus not effecting the application overall size.
-5. It facilicates synchronous as well as asynchronous message delivery and processing.
+5. It facilitates synchronous as well as asynchronous message delivery and processing.
 6. It provides a mechanism to run code asynchronously.
 
 # Library Classes Overview
@@ -180,7 +180,7 @@ dependencies {
 
 ## Example 2: Creating public channel and sending and receiving messages over it
 
-### Step 1: Create Message class. This is same as above expamle 1.
+### Step 1: Create Message class. This is same as above example 1.
 
 ### Step 2: Create a public channel and give it a unique id.
 
