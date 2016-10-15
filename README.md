@@ -19,13 +19,13 @@ The design of this library is such that the modularity of the code is enhanced a
 </br>
 </br>
 <p align="center">
-  <img src="https://github.com/janishar/janishar.github.io/blob/master/images/jpost_viz.png" width="400">
+  <img src="https://janishar.github.io/images/jpost_viz.png" width="400">
   <h4 align="center">Communication Model</h4>
 </p>
 </br>
 </br>
 <p align="center">
-  <img src="https://github.com/janishar/janishar.github.io/blob/master/images/jpost_exe_viz.png" width="750">
+  <img src="https://janishar.github.io/images/jpost_exe_viz.png" width="750">
   <h4 align="center">Execution Model</h4>
 </p>
 </br>
