@@ -33,6 +33,12 @@ The design of this library is such that the modularity of the code is enhanced a
 </br>
 <hr />
 
+# About The Author
+You can connect with me here:
+* [Janishar Ali](https://janisharali.com)
+* [Twitter](https://twitter.com/janisharali)
+* [YouTube Channel](https://www.youtube.com/@unusualcode)
+
 ## If this library helps you in anyway, show your love :heart: by putting a :star: on this project :v:
 
 # Gradle
